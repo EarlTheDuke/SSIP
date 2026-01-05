@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSIP API Gateway Code Architecture | Silver Star Industries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #0a0f1a;
+            --navy-primary: #131c2e;
+            --navy-medium: #1e2d47;
+            --navy-light: #2d4263;
+            --blue-accent: #4a90d9;
+            --blue-bright: #5da9e9;
+            --blue-glow: #7ec8e3;
+            --silver-light: #e8ecf1;
+            --silver-mid: #a0aec0;
+            --white: #ffffff;
+            
+            /* Syntax Highlighting */
+            --syntax-keyword: #c792ea;
+            --syntax-type: #82aaff;
+            --syntax-string: #c3e88d;
+            --syntax-number: #f78c6c;
+            --syntax-comment: #546e7a;
+            --syntax-function: #82aaff;
+            --syntax-attribute: #ffcb6b;
+            --syntax-interface: #89ddff;
+            --syntax-class: #ffcb6b;
+            
+            /* Feature Colors */
+            --auth-color: #f472b6;
+            --transform-color: #22d3ee;
+            --eventbus-color: #a78bfa;
+            --routing-color: #34d399;
+            --ratelimit-color: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy-deep);
+            min-height: 100vh;
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(var(--blue-accent) 1px, transparent 1px),
+                linear-gradient(90deg, var(--blue-accent) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .company-name {
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--silver-mid);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1100px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar - Project Structure */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .panel {
+            background: rgba(19, 28, 46, 0.8);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 20px;
+            background: rgba(74, 144, 217, 0.1);
+            border-bottom: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .panel-icon {
+            font-size: 1.1rem;
+        }
+
+        .panel-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .panel-content {
+            padding: 16px;
+        }
+
+        /* File Tree */
+        .file-tree {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tree-item:hover {
+            background: rgba(74, 144, 217, 0.1);
+        }
+
+        .tree-item.folder {
+            color: var(--blue-bright);
+        }
+
+        .tree-item.file {
+            color: var(--silver-light);
+            padding-left: 24px;
+        }
+
+        .tree-item.file.interface {
+            color: var(--syntax-interface);
+        }
+
+        .tree-item.file.class {
+            color: var(--syntax-class);
+        }
+
+        .tree-item.active {
+            background: rgba(74, 144, 217, 0.2);
+        }
+
+        .tree-indent {
+            padding-left: 16px;
+        }
+
+        .tree-icon {
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Feature Legend */
+        .feature-legend {
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.auth { background: var(--auth-color); }
+        .legend-dot.transform { background: var(--transform-color); }
+        .legend-dot.eventbus { background: var(--eventbus-color); }
+        .legend-dot.routing { background: var(--routing-color); }
+        .legend-dot.ratelimit { background: var(--ratelimit-color); }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Code Section */
+        .code-section {
+            background: rgba(19, 28, 46, 0.6);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .code-section.auth { border-left: 4px solid var(--auth-color); }
+        .code-section.transform { border-left: 4px solid var(--transform-color); }
+        .code-section.eventbus { border-left: 4px solid var(--eventbus-color); }
+        .code-section.routing { border-left: 4px solid var(--routing-color); }
+        .code-section.ratelimit { border-left: 4px solid var(--ratelimit-color); }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(10, 15, 26, 0.5);
+            border-bottom: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .code-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .code-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .code-icon.auth { background: rgba(244, 114, 182, 0.2); }
+        .code-icon.transform { background: rgba(34, 211, 238, 0.2); }
+        .code-icon.eventbus { background: rgba(167, 139, 250, 0.2); }
+        .code-icon.routing { background: rgba(52, 211, 153, 0.2); }
+        .code-icon.ratelimit { background: rgba(251, 191, 36, 0.2); }
+
+        .code-title-group h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .code-title-group span {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-badge {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-badge.interface {
+            background: rgba(137, 221, 255, 0.15);
+            color: var(--syntax-interface);
+        }
+
+        .code-badge.class {
+            background: rgba(255, 203, 107, 0.15);
+            color: var(--syntax-class);
+        }
+
+        .code-badge.middleware {
+            background: rgba(199, 146, 234, 0.15);
+            color: var(--syntax-keyword);
+        }
+
+        .code-badge.config {
+            background: rgba(195, 232, 141, 0.15);
+            color: var(--syntax-string);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--navy-deep);
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Syntax Highlighting */
+        .kw { color: var(--syntax-keyword); }
+        .ty { color: var(--syntax-type); }
+        .str { color: var(--syntax-string); }
+        .num { color: var(--syntax-number); }
+        .cm { color: var(--syntax-comment); font-style: italic; }
+        .fn { color: var(--syntax-function); }
+        .attr { color: var(--syntax-attribute); }
+        .int { color: var(--syntax-interface); }
+
+        /* Code Description */
+        .code-description {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(74, 144, 217, 0.1);
+            background: rgba(10, 15, 26, 0.3);
+        }
+
+        .code-description p {
+            font-size: 0.8rem;
+            color: var(--silver-mid);
+            margin-bottom: 10px;
+        }
+
+        .code-description p:last-child {
+            margin-bottom: 0;
+        }
+
+        .desc-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .desc-feature {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: rgba(74, 144, 217, 0.1);
+            border: 1px solid rgba(74, 144, 217, 0.2);
+            border-radius: 6px;
+            color: var(--blue-glow);
+        }
+
+        /* Architecture Overview */
+        .arch-overview {
+            background: rgba(19, 28, 46, 0.6);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .arch-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .arch-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .arch-layer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(10, 15, 26, 0.5);
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .arch-layer.entry { border-color: var(--routing-color); }
+        .arch-layer.middleware { border-color: var(--auth-color); }
+        .arch-layer.services { border-color: var(--transform-color); }
+        .arch-layer.bus { border-color: var(--eventbus-color); }
+
+        .arch-layer-icon {
+            font-size: 1.2rem;
+        }
+
+        .arch-layer-info {
+            flex: 1;
+        }
+
+        .arch-layer-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .arch-layer-desc {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+        }
+
+        .arch-arrow {
+            text-align: center;
+            color: var(--blue-accent);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        /* Dependency Panel */
+        .deps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .dep-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(10, 15, 26, 0.5);
+            border-radius: 8px;
+        }
+
+        .dep-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(74, 144, 217, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .dep-info {
+            flex: 1;
+        }
+
+        .dep-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .dep-version {
+            font-size: 0.65rem;
+            color: var(--silver-mid);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(197, 205, 216, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 5 L85 25 L85 45 L50 65 L15 45 L15 25 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 35 L85 55 L85 75 L50 95 L15 75 L15 55 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 65 L50 35" stroke="#4a90d9" stroke-width="3"/>
+                    </svg>
+                </div>
+                <span class="company-name">Silver Star Industries</span>
+            </div>
+            <h1 class="title">API Gateway Code Architecture</h1>
+            <p class="subtitle">SSIP Boundary Layer — .NET 8 implementation with authentication, routing, data transformation, event bus, and rate limiting</p>
+
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Core Modules</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Interfaces</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Services</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">.NET 8</div>
+                    <div class="stat-label">Framework</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-grid">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📁</span>
+                        <span class="panel-title">Project Structure</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="file-tree">
+                            <div class="tree-item folder">
+                                <span class="tree-icon">📂</span>
+                                <span>SSIP.Gateway/</span>
+                            </div>
+                            <div class="tree-indent">
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>Authentication/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file interface">
+                                        <span class="tree-icon">📄</span>
+                                        <span>IAuthService.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>JwtAuthService.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>ApiKeyValidator.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>Routing/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file interface">
+                                        <span class="tree-icon">📄</span>
+                                        <span>IRouteResolver.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>DynamicRouter.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>ServiceRegistry.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>Transform/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file interface">
+                                        <span class="tree-icon">📄</span>
+                                        <span>IDataTransformer.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>JsonTransformer.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>SchemaMapper.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>EventBus/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file interface">
+                                        <span class="tree-icon">📄</span>
+                                        <span>IEventBus.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>AzureServiceBus.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>EventDispatcher.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>RateLimiting/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file interface">
+                                        <span class="tree-icon">📄</span>
+                                        <span>IRateLimiter.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>SlidingWindowLimiter.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item folder">
+                                    <span class="tree-icon">📂</span>
+                                    <span>Middleware/</span>
+                                </div>
+                                <div class="tree-indent">
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>GatewayMiddleware.cs</span>
+                                    </div>
+                                    <div class="tree-item file class">
+                                        <span class="tree-icon">📄</span>
+                                        <span>RequestLogging.cs</span>
+                                    </div>
+                                </div>
+                                <div class="tree-item file">
+                                    <span class="tree-icon">📄</span>
+                                    <span>Program.cs</span>
+                                </div>
+                                <div class="tree-item file">
+                                    <span class="tree-icon">⚙️</span>
+                                    <span>appsettings.json</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature Legend -->
+                        <div class="feature-legend">
+                            <div class="panel-header" style="margin: 16px -16px -16px; border-radius: 0;">
+                                <span class="panel-icon">🎨</span>
+                                <span class="panel-title">Components</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot auth"></span>
+                                <span>Authentication</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot routing"></span>
+                                <span>API Routing</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot transform"></span>
+                                <span>Data Transform</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot eventbus"></span>
+                                <span>Event Bus</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot ratelimit"></span>
+                                <span>Rate Limiting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Architecture Overview -->
+                <div class="arch-overview">
+                    <h2 class="arch-title">
+                        <span>🏗️</span>
+                        <span>Request Pipeline Flow</span>
+                    </h2>
+                    <div class="arch-diagram">
+                        <div class="arch-layer entry">
+                            <span class="arch-layer-icon">🌐</span>
+                            <div class="arch-layer-info">
+                                <div class="arch-layer-name">Entry Point</div>
+                                <div class="arch-layer-desc">HTTP Request → Kestrel → ASP.NET Core Pipeline</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-layer middleware">
+                            <span class="arch-layer-icon">🔐</span>
+                            <div class="arch-layer-info">
+                                <div class="arch-layer-name">Authentication Middleware</div>
+                                <div class="arch-layer-desc">JWT Validation → API Key Check → Claims Principal</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-layer services">
+                            <span class="arch-layer-icon">🔄</span>
+                            <div class="arch-layer-info">
+                                <div class="arch-layer-name">Gateway Services</div>
+                                <div class="arch-layer-desc">Route Resolution → Data Transform → Service Proxy</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-layer bus">
+                            <span class="arch-layer-icon">📡</span>
+                            <div class="arch-layer-info">
+                                <div class="arch-layer-name">Event Bus Integration</div>
+                                <div class="arch-layer-desc">Azure Service Bus → Event Publishing → Subscribers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Authentication Interface -->
+                <div class="code-section auth">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon auth">🔐</div>
+                            <div class="code-title-group">
+                                <h3>IAuthService.cs</h3>
+                                <span>SSIP.Gateway/Authentication/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge interface">Interface</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.Authentication</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Core authentication service for the SSIP API Gateway.</span>
+<span class="cm">/// Handles JWT tokens, API keys, and OAuth 2.0 flows.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public interface</span> <span class="int">IAuthService</span>
+{
+    <span class="cm">/// &lt;summary&gt;Validates JWT bearer token and returns claims principal&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">AuthResult</span>&gt; <span class="fn">ValidateTokenAsync</span>(<span class="ty">string</span> token, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Validates API key for service-to-service auth&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">AuthResult</span>&gt; <span class="fn">ValidateApiKeyAsync</span>(<span class="ty">string</span> apiKey, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Generates new JWT token for authenticated user&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">TokenResponse</span>&gt; <span class="fn">GenerateTokenAsync</span>(<span class="ty">UserCredentials</span> credentials, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Refreshes expired token using refresh token&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">TokenResponse</span>&gt; <span class="fn">RefreshTokenAsync</span>(<span class="ty">string</span> refreshToken, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Checks if user has required permission for resource&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">bool</span>&gt; <span class="fn">HasPermissionAsync</span>(<span class="ty">ClaimsPrincipal</span> user, <span class="ty">string</span> resource, <span class="ty">string</span> action);
+}
+
+<span class="kw">public record</span> <span class="ty">AuthResult</span>(
+    <span class="ty">bool</span> IsValid,
+    <span class="ty">ClaimsPrincipal</span>? Principal,
+    <span class="ty">string</span>? ErrorMessage
+);
+
+<span class="kw">public record</span> <span class="ty">TokenResponse</span>(
+    <span class="ty">string</span> AccessToken,
+    <span class="ty">string</span> RefreshToken,
+    <span class="ty">DateTime</span> ExpiresAt,
+    <span class="ty">IReadOnlyList</span>&lt;<span class="ty">string</span>&gt; Scopes
+);</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Central authentication contract for all gateway authentication needs. Supports multiple auth methods including JWT bearer tokens for user auth and API keys for service-to-service communication.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">JWT Bearer Auth</span>
+                            <span class="desc-feature">API Key Auth</span>
+                            <span class="desc-feature">OAuth 2.0</span>
+                            <span class="desc-feature">RBAC Permissions</span>
+                            <span class="desc-feature">Token Refresh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Route Resolver Interface -->
+                <div class="code-section routing">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon routing">📋</div>
+                            <div class="code-title-group">
+                                <h3>IRouteResolver.cs</h3>
+                                <span>SSIP.Gateway/Routing/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge interface">Interface</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.Routing</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Resolves incoming requests to appropriate backend services.</span>
+<span class="cm">/// Supports dynamic routing, load balancing, and service discovery.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public interface</span> <span class="int">IRouteResolver</span>
+{
+    <span class="cm">/// &lt;summary&gt;Resolves request path to backend service endpoint&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">RouteMatch</span>?&gt; <span class="fn">ResolveAsync</span>(<span class="ty">HttpRequest</span> request, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Registers a new route mapping&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">RegisterRouteAsync</span>(<span class="ty">RouteDefinition</span> route, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>);
+    
+    <span class="cm">/// &lt;summary&gt;Gets all registered routes for a service&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">IReadOnlyList</span>&lt;<span class="ty">RouteDefinition</span>&gt;&gt; <span class="fn">GetRoutesAsync</span>(<span class="ty">string</span> serviceName);
+    
+    <span class="cm">/// &lt;summary&gt;Health check for target service&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">ServiceHealth</span>&gt; <span class="fn">CheckServiceHealthAsync</span>(<span class="ty">string</span> serviceName);
+}
+
+<span class="kw">public record</span> <span class="ty">RouteMatch</span>(
+    <span class="ty">string</span> ServiceName,
+    <span class="ty">Uri</span> TargetUri,
+    <span class="ty">Dictionary</span>&lt;<span class="ty">string</span>, <span class="ty">string</span>&gt; RouteParams,
+    <span class="ty">TimeSpan</span> Timeout,
+    <span class="ty">RetryPolicy</span>? RetryPolicy
+);
+
+<span class="kw">public record</span> <span class="ty">RouteDefinition</span>(
+    <span class="ty">string</span> Pattern,           <span class="cm">// e.g., "/api/erp/{*path}"</span>
+    <span class="ty">string</span> ServiceName,       <span class="cm">// e.g., "erp-service"</span>
+    <span class="ty">string</span> TargetBaseUrl,     <span class="cm">// e.g., "http://erp-internal:5001"</span>
+    <span class="ty">string</span>[] AllowedMethods,  <span class="cm">// e.g., ["GET", "POST", "PUT"]</span>
+    <span class="ty">bool</span> RequiresAuth,
+    <span class="ty">string</span>[]? RequiredScopes
+);
+
+<span class="kw">public enum</span> <span class="ty">ServiceHealth</span> { Healthy, Degraded, Unhealthy, Unknown }</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Dynamic routing engine that maps incoming API requests to appropriate backend services (ERP, TinyBox AI, CRM connectors). Supports pattern matching, path parameters, and service health monitoring.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">Pattern Matching</span>
+                            <span class="desc-feature">Service Discovery</span>
+                            <span class="desc-feature">Load Balancing</span>
+                            <span class="desc-feature">Health Checks</span>
+                            <span class="desc-feature">Retry Policies</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Data Transformer Interface -->
+                <div class="code-section transform">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon transform">🔄</div>
+                            <div class="code-title-group">
+                                <h3>IDataTransformer.cs</h3>
+                                <span>SSIP.Gateway/Transform/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge interface">Interface</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.Transform</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Transforms data between different system schemas.</span>
+<span class="cm">/// Handles ERP ↔ CRM mappings, field translations, and format conversions.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public interface</span> <span class="int">IDataTransformer</span>
+{
+    <span class="cm">/// &lt;summary&gt;Transforms request payload before forwarding to backend&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">JsonDocument</span>&gt; <span class="fn">TransformRequestAsync</span>(
+        <span class="ty">JsonDocument</span> payload,
+        <span class="ty">string</span> sourceSchema,
+        <span class="ty">string</span> targetSchema,
+        <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>
+    );
+    
+    <span class="cm">/// &lt;summary&gt;Transforms response payload before returning to caller&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">JsonDocument</span>&gt; <span class="fn">TransformResponseAsync</span>(
+        <span class="ty">JsonDocument</span> payload,
+        <span class="ty">string</span> sourceSchema,
+        <span class="ty">string</span> targetSchema,
+        <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>
+    );
+    
+    <span class="cm">/// &lt;summary&gt;Registers a schema mapping configuration&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">RegisterMappingAsync</span>(<span class="ty">SchemaMapping</span> mapping);
+    
+    <span class="cm">/// &lt;summary&gt;Validates payload against target schema&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">ValidationResult</span>&gt; <span class="fn">ValidateAsync</span>(<span class="ty">JsonDocument</span> payload, <span class="ty">string</span> schemaName);
+}
+
+<span class="kw">public record</span> <span class="ty">SchemaMapping</span>(
+    <span class="ty">string</span> SourceSchema,      <span class="cm">// e.g., "erp.project.v1"</span>
+    <span class="ty">string</span> TargetSchema,      <span class="cm">// e.g., "dynamics.opportunity.v1"</span>
+    <span class="ty">Dictionary</span>&lt;<span class="ty">string</span>, <span class="ty">FieldMapping</span>&gt; FieldMappings
+);
+
+<span class="kw">public record</span> <span class="ty">FieldMapping</span>(
+    <span class="ty">string</span> SourcePath,        <span class="cm">// JSON path: "$.project.name"</span>
+    <span class="ty">string</span> TargetPath,        <span class="cm">// JSON path: "$.opportunity.title"</span>
+    <span class="ty">TransformType</span> Transform, <span class="cm">// Direct, Computed, Lookup</span>
+    <span class="ty">string</span>? TransformExpression
+);
+
+<span class="kw">public enum</span> <span class="ty">TransformType</span> { Direct, Computed, Lookup, Constant, Conditional }</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Schema translation layer that transforms data between internal Silver Star formats and external system formats (Dynamics 365, Power Automate). Essential for maintaining data consistency across integrated systems.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">JSON Path Mapping</span>
+                            <span class="desc-feature">Schema Validation</span>
+                            <span class="desc-feature">Field Transformations</span>
+                            <span class="desc-feature">Computed Fields</span>
+                            <span class="desc-feature">Lookup Tables</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Event Bus Interface -->
+                <div class="code-section eventbus">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon eventbus">📡</div>
+                            <div class="code-title-group">
+                                <h3>IEventBus.cs</h3>
+                                <span>SSIP.Gateway/EventBus/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge interface">Interface</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.EventBus</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Event bus for async communication between SSIP components.</span>
+<span class="cm">/// Backed by Azure Service Bus for reliable message delivery.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public interface</span> <span class="int">IEventBus</span>
+{
+    <span class="cm">/// &lt;summary&gt;Publishes an integration event to all subscribers&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">PublishAsync</span>&lt;<span class="ty">TEvent</span>&gt;(<span class="ty">TEvent</span> @event, <span class="ty">CancellationToken</span> ct = <span class="kw">default</span>)
+        <span class="kw">where</span> <span class="ty">TEvent</span> : <span class="int">IIntegrationEvent</span>;
+    
+    <span class="cm">/// &lt;summary&gt;Subscribes handler to specific event type&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">SubscribeAsync</span>&lt;<span class="ty">TEvent</span>, <span class="ty">THandler</span>&gt;()
+        <span class="kw">where</span> <span class="ty">TEvent</span> : <span class="int">IIntegrationEvent</span>
+        <span class="kw">where</span> <span class="ty">THandler</span> : <span class="int">IEventHandler</span>&lt;<span class="ty">TEvent</span>&gt;;
+    
+    <span class="cm">/// &lt;summary&gt;Sends a command to a specific queue&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">SendCommandAsync</span>&lt;<span class="ty">TCommand</span>&gt;(<span class="ty">string</span> queueName, <span class="ty">TCommand</span> command);
+    
+    <span class="cm">/// &lt;summary&gt;Schedules an event for future delivery&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">ScheduleAsync</span>&lt;<span class="ty">TEvent</span>&gt;(<span class="ty">TEvent</span> @event, <span class="ty">DateTimeOffset</span> deliveryTime);
+}
+
+<span class="kw">public interface</span> <span class="int">IIntegrationEvent</span>
+{
+    <span class="ty">Guid</span> EventId { <span class="kw">get</span>; }
+    <span class="ty">DateTimeOffset</span> Timestamp { <span class="kw">get</span>; }
+    <span class="ty">string</span> CorrelationId { <span class="kw">get</span>; }
+    <span class="ty">string</span> Source { <span class="kw">get</span>; }
+}
+
+<span class="kw">public interface</span> <span class="int">IEventHandler</span>&lt;<span class="kw">in</span> <span class="ty">TEvent</span>&gt; <span class="kw">where</span> <span class="ty">TEvent</span> : <span class="int">IIntegrationEvent</span>
+{
+    <span class="ty">Task</span> <span class="fn">HandleAsync</span>(<span class="ty">TEvent</span> @event, <span class="ty">CancellationToken</span> ct);
+}
+
+<span class="cm">// Example integration events</span>
+<span class="kw">public record</span> <span class="ty">ProjectCreatedEvent</span>(<span class="ty">Guid</span> ProjectId, <span class="ty">string</span> ProjectNumber) : <span class="int">IIntegrationEvent</span>;
+<span class="kw">public record</span> <span class="ty">WorkOrderStatusChanged</span>(<span class="ty">Guid</span> WorkOrderId, <span class="ty">string</span> NewStatus) : <span class="int">IIntegrationEvent</span>;
+<span class="kw">public record</span> <span class="ty">CrmContactSynced</span>(<span class="ty">Guid</span> ContactId, <span class="ty">string</span> Email) : <span class="int">IIntegrationEvent</span>;</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Asynchronous event-driven communication backbone for SSIP. Enables loose coupling between services and real-time synchronization between ERP, CRM, and automation workflows.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">Pub/Sub Pattern</span>
+                            <span class="desc-feature">Azure Service Bus</span>
+                            <span class="desc-feature">Event Correlation</span>
+                            <span class="desc-feature">Scheduled Events</span>
+                            <span class="desc-feature">Dead Letter Queue</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Rate Limiter Interface -->
+                <div class="code-section ratelimit">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon ratelimit">⚡</div>
+                            <div class="code-title-group">
+                                <h3>IRateLimiter.cs</h3>
+                                <span>SSIP.Gateway/RateLimiting/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge interface">Interface</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.RateLimiting</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Rate limiting service to protect backend systems from overload.</span>
+<span class="cm">/// Supports per-client, per-endpoint, and global rate limits.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public interface</span> <span class="int">IRateLimiter</span>
+{
+    <span class="cm">/// &lt;summary&gt;Checks if request is allowed under rate limit&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">RateLimitResult</span>&gt; <span class="fn">CheckAsync</span>(<span class="ty">RateLimitContext</span> context);
+    
+    <span class="cm">/// &lt;summary&gt;Records a request for rate tracking&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">RecordRequestAsync</span>(<span class="ty">string</span> clientId, <span class="ty">string</span> endpoint);
+    
+    <span class="cm">/// &lt;summary&gt;Gets current rate limit status for client&lt;/summary&gt;</span>
+    <span class="ty">Task</span>&lt;<span class="ty">RateLimitStatus</span>&gt; <span class="fn">GetStatusAsync</span>(<span class="ty">string</span> clientId);
+    
+    <span class="cm">/// &lt;summary&gt;Configures rate limit policy for endpoint&lt;/summary&gt;</span>
+    <span class="ty">Task</span> <span class="fn">ConfigurePolicyAsync</span>(<span class="ty">string</span> endpoint, <span class="ty">RateLimitPolicy</span> policy);
+}
+
+<span class="kw">public record</span> <span class="ty">RateLimitContext</span>(
+    <span class="ty">string</span> ClientId,        <span class="cm">// User ID or API key</span>
+    <span class="ty">string</span> Endpoint,        <span class="cm">// Request path</span>
+    <span class="ty">string</span> ClientIp,        <span class="cm">// For IP-based limiting</span>
+    <span class="ty">string</span>? TenantId        <span class="cm">// For multi-tenant scenarios</span>
+);
+
+<span class="kw">public record</span> <span class="ty">RateLimitResult</span>(
+    <span class="ty">bool</span> IsAllowed,
+    <span class="ty">int</span> RemainingRequests,
+    <span class="ty">TimeSpan</span> RetryAfter,
+    <span class="ty">string</span>? RejectReason
+);
+
+<span class="kw">public record</span> <span class="ty">RateLimitPolicy</span>(
+    <span class="ty">int</span> RequestsPerWindow,   <span class="cm">// e.g., 100</span>
+    <span class="ty">TimeSpan</span> WindowSize,     <span class="cm">// e.g., 1 minute</span>
+    <span class="ty">LimitType</span> Type,          <span class="cm">// Sliding, Fixed, Token Bucket</span>
+    <span class="ty">int</span>? BurstLimit          <span class="cm">// Allow burst above limit</span>
+);
+
+<span class="kw">public enum</span> <span class="ty">LimitType</span> { SlidingWindow, FixedWindow, TokenBucket, LeakyBucket }</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Protects backend services from excessive requests and ensures fair resource allocation. Critical for external API consumers and preventing cascading failures.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">Sliding Window</span>
+                            <span class="desc-feature">Per-Client Limits</span>
+                            <span class="desc-feature">Burst Handling</span>
+                            <span class="desc-feature">429 Responses</span>
+                            <span class="desc-feature">Redis Backed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Gateway Middleware -->
+                <div class="code-section routing">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon routing">🔗</div>
+                            <div class="code-title-group">
+                                <h3>GatewayMiddleware.cs</h3>
+                                <span>SSIP.Gateway/Middleware/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge middleware">Middleware</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">namespace</span> <span class="ty">SSIP.Gateway.Middleware</span>;
+
+<span class="cm">/// &lt;summary&gt;</span>
+<span class="cm">/// Core gateway middleware that orchestrates the request pipeline.</span>
+<span class="cm">/// Combines auth, routing, transformation, and proxying.</span>
+<span class="cm">/// &lt;/summary&gt;</span>
+<span class="kw">public class</span> <span class="attr">GatewayMiddleware</span>
+{
+    <span class="kw">private readonly</span> <span class="ty">RequestDelegate</span> _next;
+    <span class="kw">private readonly</span> <span class="int">IAuthService</span> _auth;
+    <span class="kw">private readonly</span> <span class="int">IRouteResolver</span> _router;
+    <span class="kw">private readonly</span> <span class="int">IDataTransformer</span> _transformer;
+    <span class="kw">private readonly</span> <span class="int">IRateLimiter</span> _rateLimiter;
+    <span class="kw">private readonly</span> <span class="int">IEventBus</span> _eventBus;
+    <span class="kw">private readonly</span> <span class="ty">IHttpClientFactory</span> _httpClientFactory;
+    <span class="kw">private readonly</span> <span class="ty">ILogger</span>&lt;<span class="attr">GatewayMiddleware</span>&gt; _logger;
+
+    <span class="kw">public async</span> <span class="ty">Task</span> <span class="fn">InvokeAsync</span>(<span class="ty">HttpContext</span> context)
+    {
+        <span class="kw">var</span> correlationId = <span class="ty">Guid</span>.NewGuid().ToString();
+        context.Response.Headers.Append(<span class="str">"X-Correlation-Id"</span>, correlationId);
+
+        <span class="kw">try</span>
+        {
+            <span class="cm">// 1. Rate Limiting Check</span>
+            <span class="kw">var</span> rateLimitResult = <span class="kw">await</span> _rateLimiter.<span class="fn">CheckAsync</span>(<span class="kw">new</span> <span class="ty">RateLimitContext</span>(
+                GetClientId(context),
+                context.Request.Path,
+                context.Connection.RemoteIpAddress?.ToString() ?? <span class="str">"unknown"</span>,
+                context.User.FindFirst(<span class="str">"tenant_id"</span>)?.Value
+            ));
+
+            <span class="kw">if</span> (!rateLimitResult.IsAllowed)
+            {
+                context.Response.StatusCode = <span class="num">429</span>;
+                context.Response.Headers.Append(<span class="str">"Retry-After"</span>, rateLimitResult.RetryAfter.TotalSeconds.ToString());
+                <span class="kw">return</span>;
+            }
+
+            <span class="cm">// 2. Resolve Route</span>
+            <span class="kw">var</span> route = <span class="kw">await</span> _router.<span class="fn">ResolveAsync</span>(context.Request);
+            <span class="kw">if</span> (route <span class="kw">is null</span>)
+            {
+                context.Response.StatusCode = <span class="num">404</span>;
+                <span class="kw">return</span>;
+            }
+
+            <span class="cm">// 3. Transform Request (if schema mapping exists)</span>
+            <span class="kw">var</span> requestBody = <span class="kw">await</span> <span class="fn">ReadRequestBodyAsync</span>(context.Request);
+            <span class="kw">if</span> (requestBody <span class="kw">is not null</span>)
+            {
+                requestBody = <span class="kw">await</span> _transformer.<span class="fn">TransformRequestAsync</span>(
+                    requestBody,
+                    <span class="str">"gateway.incoming"</span>,
+                    $<span class="str">"{route.ServiceName}.request"</span>
+                );
+            }
+
+            <span class="cm">// 4. Forward to Backend Service</span>
+            <span class="kw">var</span> response = <span class="kw">await</span> <span class="fn">ForwardRequestAsync</span>(context, route, requestBody);
+
+            <span class="cm">// 5. Transform Response</span>
+            <span class="kw">var</span> responseBody = <span class="kw">await</span> <span class="fn">ReadResponseAsync</span>(response);
+            <span class="kw">if</span> (responseBody <span class="kw">is not null</span>)
+            {
+                responseBody = <span class="kw">await</span> _transformer.<span class="fn">TransformResponseAsync</span>(
+                    responseBody,
+                    $<span class="str">"{route.ServiceName}.response"</span>,
+                    <span class="str">"gateway.outgoing"</span>
+                );
+            }
+
+            <span class="cm">// 6. Publish Event (for async downstream processing)</span>
+            <span class="kw">await</span> _eventBus.<span class="fn">PublishAsync</span>(<span class="kw">new</span> <span class="ty">ApiRequestProcessed</span>(
+                correlationId, route.ServiceName, context.Response.StatusCode
+            ));
+
+            <span class="cm">// 7. Write Response</span>
+            <span class="kw">await</span> <span class="fn">WriteResponseAsync</span>(context, response, responseBody);
+        }
+        <span class="kw">catch</span> (<span class="ty">Exception</span> ex)
+        {
+            _logger.LogError(ex, <span class="str">"Gateway error for {Path}"</span>, context.Request.Path);
+            context.Response.StatusCode = <span class="num">502</span>;
+        }
+    }
+}</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> The central orchestrator that combines all gateway capabilities into a single request pipeline. Handles the complete lifecycle from authentication through response transformation.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">Request Pipeline</span>
+                            <span class="desc-feature">Error Handling</span>
+                            <span class="desc-feature">Correlation IDs</span>
+                            <span class="desc-feature">Async Events</span>
+                            <span class="desc-feature">Response Proxy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Program.cs - Service Registration -->
+                <div class="code-section">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <div class="code-icon" style="background: rgba(74, 144, 217, 0.2);">⚙️</div>
+                            <div class="code-title-group">
+                                <h3>Program.cs</h3>
+                                <span>SSIP.Gateway/</span>
+                            </div>
+                        </div>
+                        <span class="code-badge config">Entry Point</span>
+                    </div>
+                    <div class="code-block">
+<pre><span class="kw">using</span> <span class="ty">SSIP.Gateway.Authentication</span>;
+<span class="kw">using</span> <span class="ty">SSIP.Gateway.Routing</span>;
+<span class="kw">using</span> <span class="ty">SSIP.Gateway.Transform</span>;
+<span class="kw">using</span> <span class="ty">SSIP.Gateway.EventBus</span>;
+<span class="kw">using</span> <span class="ty">SSIP.Gateway.RateLimiting</span>;
+<span class="kw">using</span> <span class="ty">SSIP.Gateway.Middleware</span>;
+
+<span class="kw">var</span> builder = <span class="ty">WebApplication</span>.CreateBuilder(args);
+
+<span class="cm">// ═══════════════════════════════════════════════════════════════</span>
+<span class="cm">//  SSIP GATEWAY SERVICE REGISTRATION</span>
+<span class="cm">// ═══════════════════════════════════════════════════════════════</span>
+
+<span class="cm">// Authentication Services</span>
+builder.Services.AddScoped&lt;<span class="int">IAuthService</span>, <span class="attr">JwtAuthService</span>&gt;();
+builder.Services.AddAuthentication(<span class="str">"Bearer"</span>)
+    .AddJwtBearer(options =&gt;
+    {
+        options.Authority = builder.Configuration[<span class="str">"Auth:Authority"</span>];
+        options.Audience = builder.Configuration[<span class="str">"Auth:Audience"</span>];
+        options.TokenValidationParameters.ValidateLifetime = <span class="kw">true</span>;
+    });
+
+<span class="cm">// Routing Services</span>
+builder.Services.AddSingleton&lt;<span class="int">IRouteResolver</span>, <span class="attr">DynamicRouter</span>&gt;();
+builder.Services.AddSingleton&lt;<span class="attr">ServiceRegistry</span>&gt;();
+
+<span class="cm">// Data Transformation</span>
+builder.Services.AddScoped&lt;<span class="int">IDataTransformer</span>, <span class="attr">JsonTransformer</span>&gt;();
+builder.Services.AddSingleton&lt;<span class="attr">SchemaMapper</span>&gt;();
+
+<span class="cm">// Event Bus (Azure Service Bus)</span>
+builder.Services.AddSingleton&lt;<span class="int">IEventBus</span>, <span class="attr">AzureServiceBusEventBus</span>&gt;(sp =&gt;
+    <span class="kw">new</span> <span class="attr">AzureServiceBusEventBus</span>(
+        builder.Configuration[<span class="str">"ServiceBus:ConnectionString"</span>]!,
+        sp.GetRequiredService&lt;<span class="ty">ILogger</span>&lt;<span class="attr">AzureServiceBusEventBus</span>&gt;&gt;()
+    ));
+
+<span class="cm">// Rate Limiting</span>
+builder.Services.AddSingleton&lt;<span class="int">IRateLimiter</span>, <span class="attr">SlidingWindowLimiter</span>&gt;();
+builder.Services.AddStackExchangeRedisCache(options =&gt;
+{
+    options.Configuration = builder.Configuration[<span class="str">"Redis:ConnectionString"</span>];
+});
+
+<span class="cm">// HTTP Client Factory for backend calls</span>
+builder.Services.AddHttpClient(<span class="str">"BackendServices"</span>)
+    .AddPolicyHandler(<span class="fn">GetRetryPolicy</span>())
+    .AddPolicyHandler(<span class="fn">GetCircuitBreakerPolicy</span>());
+
+<span class="cm">// Health Checks</span>
+builder.Services.AddHealthChecks()
+    .AddCheck&lt;<span class="attr">ServiceBusHealthCheck</span>&gt;(<span class="str">"servicebus"</span>)
+    .AddCheck&lt;<span class="attr">RedisHealthCheck</span>&gt;(<span class="str">"redis"</span>)
+    .AddCheck&lt;<span class="attr">ErpHealthCheck</span>&gt;(<span class="str">"erp"</span>);
+
+<span class="kw">var</span> app = builder.Build();
+
+<span class="cm">// ═══════════════════════════════════════════════════════════════</span>
+<span class="cm">//  MIDDLEWARE PIPELINE</span>
+<span class="cm">// ═══════════════════════════════════════════════════════════════</span>
+
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+<span class="cm">// SSIP Gateway Middleware</span>
+app.UseMiddleware&lt;<span class="attr">RequestLoggingMiddleware</span>&gt;();
+app.UseMiddleware&lt;<span class="attr">GatewayMiddleware</span>&gt;();
+
+<span class="cm">// Health endpoint</span>
+app.MapHealthChecks(<span class="str">"/health"</span>);
+
+<span class="cm">// Metrics endpoint (Prometheus)</span>
+app.MapMetrics();
+
+app.Run();
+
+<span class="cm">// Polly Policies</span>
+<span class="kw">static</span> <span class="ty">IAsyncPolicy</span>&lt;<span class="ty">HttpResponseMessage</span>&gt; <span class="fn">GetRetryPolicy</span>() =&gt;
+    <span class="ty">HttpPolicyExtensions</span>
+        .HandleTransientHttpError()
+        .WaitAndRetryAsync(<span class="num">3</span>, attempt =&gt; <span class="ty">TimeSpan</span>.FromSeconds(<span class="ty">Math</span>.Pow(<span class="num">2</span>, attempt)));
+
+<span class="kw">static</span> <span class="ty">IAsyncPolicy</span>&lt;<span class="ty">HttpResponseMessage</span>&gt; <span class="fn">GetCircuitBreakerPolicy</span>() =&gt;
+    <span class="ty">HttpPolicyExtensions</span>
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(<span class="num">5</span>, <span class="ty">TimeSpan</span>.FromSeconds(<span class="num">30</span>));</pre>
+                    </div>
+                    <div class="code-description">
+                        <p><strong>Purpose:</strong> Application entry point that wires up all SSIP Gateway services using ASP.NET Core dependency injection. Configures the middleware pipeline, health checks, and resilience policies.</p>
+                        <div class="desc-features">
+                            <span class="desc-feature">DI Container</span>
+                            <span class="desc-feature">Polly Resilience</span>
+                            <span class="desc-feature">Health Checks</span>
+                            <span class="desc-feature">Prometheus Metrics</span>
+                            <span class="desc-feature">Circuit Breaker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dependencies -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📦</span>
+                        <span class="panel-title">NuGet Dependencies</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="deps-grid">
+                            <div class="dep-item">
+                                <div class="dep-icon">🔷</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">Microsoft.AspNetCore.Authentication.JwtBearer</div>
+                                    <div class="dep-version">8.0.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">☁️</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">Azure.Messaging.ServiceBus</div>
+                                    <div class="dep-version">7.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">🔴</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">StackExchange.Redis</div>
+                                    <div class="dep-version">2.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">🛡️</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">Polly</div>
+                                    <div class="dep-version">8.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">📊</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">prometheus-net</div>
+                                    <div class="dep-version">8.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">📝</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">Serilog.AspNetCore</div>
+                                    <div class="dep-version">8.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">🗂️</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">System.Text.Json</div>
+                                    <div class="dep-version">8.x</div>
+                                </div>
+                            </div>
+                            <div class="dep-item">
+                                <div class="dep-icon">✅</div>
+                                <div class="dep-info">
+                                    <div class="dep-name">FluentValidation</div>
+                                    <div class="dep-version">11.x</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">© 2026 Silver Star Industries — SSIP API Gateway Code Architecture v1.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+

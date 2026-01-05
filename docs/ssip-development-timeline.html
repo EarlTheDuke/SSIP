@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSIP Development Timeline | Silver Star Industries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #0f1a2e;
+            --navy-primary: #1a2744;
+            --navy-medium: #2a3f5f;
+            --navy-light: #3d5a80;
+            --blue-accent: #4a90d9;
+            --blue-bright: #5da9e9;
+            --blue-glow: #7ec8e3;
+            --silver-light: #e8ecf1;
+            --silver-mid: #c5cdd8;
+            --white: #ffffff;
+            
+            /* Phase Colors */
+            --phase-1: #f472b6;
+            --phase-2: #fbbf24;
+            --phase-3: #a78bfa;
+            --phase-4: #22d3ee;
+            --phase-5: #34d399;
+            --phase-6: #60a5fa;
+            --phase-7: #fb923c;
+            
+            /* Status Colors */
+            --status-complete: #22c55e;
+            --status-progress: #3b82f6;
+            --status-upcoming: #6b7280;
+            --milestone: #fbbf24;
+            --mvp-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy-deep);
+            min-height: 100vh;
+            color: var(--white);
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.02;
+            background-image: 
+                repeating-linear-gradient(90deg, var(--blue-accent) 0px, var(--blue-accent) 1px, transparent 1px, transparent 80px);
+            background-size: 80px 100%;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .company-name {
+            font-size: 0.95rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+        }
+
+        .title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--silver-mid);
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 24px;
+            background: rgba(26, 39, 68, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-value.mvp {
+            color: var(--mvp-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--silver-mid);
+            margin-top: 4px;
+        }
+
+        /* Legend */
+        .legend-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .legend-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(26, 39, 68, 0.4);
+            border-radius: 12px;
+            padding: 12px 20px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .legend-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--silver-light);
+        }
+
+        .legend-bar {
+            width: 20px;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .legend-diamond {
+            width: 10px;
+            height: 10px;
+            transform: rotate(45deg);
+        }
+
+        /* Gantt Chart Container */
+        .gantt-container {
+            background: rgba(26, 39, 68, 0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .gantt-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .gantt-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(74, 144, 217, 0.2);
+        }
+
+        .gantt-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        /* Gantt Chart */
+        .gantt-chart {
+            min-width: 1400px;
+        }
+
+        /* Timeline Header */
+        .timeline-header {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            margin-bottom: 10px;
+        }
+
+        .timeline-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 16px;
+        }
+
+        .timeline-months {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+        }
+
+        .month-label {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--silver-mid);
+            padding: 10px 0;
+            border-left: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .month-label.current {
+            color: var(--blue-glow);
+            background: rgba(74, 144, 217, 0.1);
+        }
+
+        /* Timeline Weeks */
+        .timeline-weeks {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            margin-bottom: 5px;
+        }
+
+        .weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(48, 1fr);
+        }
+
+        .week-marker {
+            text-align: center;
+            font-size: 0.55rem;
+            color: rgba(197, 205, 216, 0.4);
+            padding: 4px 0;
+            border-left: 1px dashed rgba(74, 144, 217, 0.05);
+        }
+
+        .week-marker:nth-child(4n+1) {
+            border-left: 1px solid rgba(74, 144, 217, 0.15);
+            color: rgba(197, 205, 216, 0.6);
+        }
+
+        /* Task Rows */
+        .task-row {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            align-items: center;
+            min-height: 44px;
+            border-bottom: 1px solid rgba(74, 144, 217, 0.05);
+        }
+
+        .task-row:hover {
+            background: rgba(74, 144, 217, 0.03);
+        }
+
+        .task-row.phase-header {
+            background: rgba(26, 39, 68, 0.6);
+            min-height: 50px;
+            margin-top: 8px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+        }
+
+        .task-phase-indicator {
+            width: 4px;
+            height: 30px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .task-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--white);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .phase-header .task-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .task-meta {
+            font-size: 0.65rem;
+            color: var(--silver-mid);
+            display: flex;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .task-duration {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Timeline Grid */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(48, 1fr);
+            position: relative;
+            height: 100%;
+        }
+
+        .grid-line {
+            border-left: 1px dashed rgba(74, 144, 217, 0.05);
+            height: 100%;
+        }
+
+        .grid-line:nth-child(4n+1) {
+            border-left: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        /* Task Bars */
+        .task-bar-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .task-bar {
+            height: 100%;
+            border-radius: 6px;
+            position: relative;
+            min-width: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-bar.phase-1 { background: linear-gradient(135deg, var(--phase-1), #ec4899); }
+        .task-bar.phase-2 { background: linear-gradient(135deg, var(--phase-2), #f59e0b); }
+        .task-bar.phase-3 { background: linear-gradient(135deg, var(--phase-3), #8b5cf6); }
+        .task-bar.phase-4 { background: linear-gradient(135deg, var(--phase-4), #06b6d4); }
+        .task-bar.phase-5 { background: linear-gradient(135deg, var(--phase-5), #10b981); }
+        .task-bar.phase-6 { background: linear-gradient(135deg, var(--phase-6), #3b82f6); }
+        .task-bar.phase-7 { background: linear-gradient(135deg, var(--phase-7), #ea580c); }
+
+        .task-bar-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 6px 0 0 6px;
+        }
+
+        .task-bar-label {
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translate(100%, -50%);
+            font-size: 0.6rem;
+            color: var(--silver-mid);
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Milestones */
+        .milestone {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 14px;
+            height: 14px;
+            background: var(--milestone);
+            border: 2px solid var(--navy-deep);
+            box-shadow: 0 0 10px var(--milestone);
+            z-index: 10;
+        }
+
+        .milestone.mvp {
+            background: var(--mvp-color);
+            box-shadow: 0 0 15px var(--mvp-color);
+            width: 18px;
+            height: 18px;
+        }
+
+        .milestone-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-45deg);
+            font-size: 0.6rem;
+            font-weight: 700;
+            white-space: nowrap;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .milestone-label.mvp {
+            background: var(--mvp-color);
+            color: white;
+        }
+
+        .milestone-label.regular {
+            background: var(--milestone);
+            color: var(--navy-deep);
+        }
+
+        /* MVP Highlight Line */
+        .mvp-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--mvp-color);
+            opacity: 0.6;
+            z-index: 5;
+        }
+
+        .mvp-line::before {
+            content: 'MVP DELIVERY';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--mvp-color);
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        /* Today Line */
+        .today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--blue-glow);
+            z-index: 5;
+        }
+
+        .today-line::before {
+            content: 'TODAY';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--blue-glow);
+            white-space: nowrap;
+        }
+
+        /* Phase Summary Cards */
+        .phase-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .phase-card {
+            background: rgba(26, 39, 68, 0.5);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid;
+        }
+
+        .phase-card.p1 { border-left-color: var(--phase-1); }
+        .phase-card.p2 { border-left-color: var(--phase-2); }
+        .phase-card.p3 { border-left-color: var(--phase-3); }
+        .phase-card.p4 { border-left-color: var(--phase-4); }
+        .phase-card.p5 { border-left-color: var(--phase-5); }
+        .phase-card.p6 { border-left-color: var(--phase-6); }
+        .phase-card.p7 { border-left-color: var(--phase-7); }
+
+        .phase-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .phase-card-number {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .p1 .phase-card-number { background: rgba(244, 114, 182, 0.2); color: var(--phase-1); }
+        .p2 .phase-card-number { background: rgba(251, 191, 36, 0.2); color: var(--phase-2); }
+        .p3 .phase-card-number { background: rgba(167, 139, 250, 0.2); color: var(--phase-3); }
+        .p4 .phase-card-number { background: rgba(34, 211, 238, 0.2); color: var(--phase-4); }
+        .p5 .phase-card-number { background: rgba(52, 211, 153, 0.2); color: var(--phase-5); }
+        .p6 .phase-card-number { background: rgba(96, 165, 250, 0.2); color: var(--phase-6); }
+        .p7 .phase-card-number { background: rgba(251, 146, 60, 0.2); color: var(--phase-7); }
+
+        .phase-card-duration {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .phase-card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .phase-card-tasks {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+            line-height: 1.5;
+        }
+
+        .phase-card-tasks li {
+            margin-left: 12px;
+            margin-bottom: 2px;
+        }
+
+        .mvp-badge {
+            display: inline-block;
+            background: var(--mvp-color);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* Key Milestones */
+        .milestones-section {
+            margin-top: 40px;
+        }
+
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .milestone-card {
+            background: rgba(26, 39, 68, 0.5);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .milestone-card.mvp-milestone {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .milestone-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(251, 191, 36, 0.2);
+            flex-shrink: 0;
+        }
+
+        .milestone-card.mvp-milestone .milestone-icon {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .milestone-info {
+            flex: 1;
+        }
+
+        .milestone-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .milestone-date {
+            font-size: 0.7rem;
+            color: var(--silver-mid);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+
+        .milestone-week {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(74, 144, 217, 0.15);
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mvp-milestone .milestone-week {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--mvp-color);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(197, 205, 216, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .gantt-chart {
+                min-width: 1200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 5 L85 25 L85 45 L50 65 L15 45 L15 25 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 35 L85 55 L85 75 L50 95 L15 75 L15 55 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 65 L50 35" stroke="#4a90d9" stroke-width="3"/>
+                    </svg>
+                </div>
+                <span class="company-name">Silver Star Industries</span>
+            </div>
+            <h1 class="title">SSIP Development Timeline</h1>
+            <p class="subtitle">Comprehensive project roadmap with phase dependencies, milestones, and MVP delivery target for the Silver Star Integration Platform</p>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Development Phases</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">48</div>
+                <div class="stat-label">Weeks Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value mvp">Week 20</div>
+                <div class="stat-label">MVP Delivery</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">26</div>
+                <div class="stat-label">Key Tasks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Major Milestones</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-section">
+            <div class="legend-group">
+                <span class="legend-title">Phases</span>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-1);"></div>
+                        <span>Assessment</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-2);"></div>
+                        <span>MVP Definition</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-3);"></div>
+                        <span>Core Boundary</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-4);"></div>
+                        <span>Internal Integration</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-5);"></div>
+                        <span>External Integration</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-6);"></div>
+                        <span>UI/UX</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--phase-7);"></div>
+                        <span>Testing & Deploy</span>
+                    </div>
+                </div>
+            </div>
+            <div class="legend-group">
+                <span class="legend-title">Markers</span>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-diamond" style="background: var(--milestone);"></div>
+                        <span>Milestone</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-diamond" style="background: var(--mvp-color);"></div>
+                        <span>MVP Milestone</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gantt Chart -->
+        <div class="gantt-container">
+            <div class="gantt-header">
+                <div class="gantt-icon">📊</div>
+                <h2 class="gantt-title">Development Gantt Chart</h2>
+            </div>
+
+            <div class="gantt-chart">
+                <!-- Timeline Header - Months -->
+                <div class="timeline-header">
+                    <div class="timeline-label">Task / Phase</div>
+                    <div class="timeline-months">
+                        <div class="month-label current">Month 1</div>
+                        <div class="month-label">Month 2</div>
+                        <div class="month-label">Month 3</div>
+                        <div class="month-label">Month 4</div>
+                        <div class="month-label">Month 5</div>
+                        <div class="month-label">Month 6</div>
+                        <div class="month-label">Month 7</div>
+                        <div class="month-label">Month 8</div>
+                        <div class="month-label">Month 9</div>
+                        <div class="month-label">Month 10</div>
+                        <div class="month-label">Month 11</div>
+                        <div class="month-label">Month 12</div>
+                    </div>
+                </div>
+
+                <!-- Timeline Weeks -->
+                <div class="timeline-weeks">
+                    <div></div>
+                    <div class="weeks-grid">
+                        <div class="week-marker">1</div>
+                        <div class="week-marker">2</div>
+                        <div class="week-marker">3</div>
+                        <div class="week-marker">4</div>
+                        <div class="week-marker">5</div>
+                        <div class="week-marker">6</div>
+                        <div class="week-marker">7</div>
+                        <div class="week-marker">8</div>
+                        <div class="week-marker">9</div>
+                        <div class="week-marker">10</div>
+                        <div class="week-marker">11</div>
+                        <div class="week-marker">12</div>
+                        <div class="week-marker">13</div>
+                        <div class="week-marker">14</div>
+                        <div class="week-marker">15</div>
+                        <div class="week-marker">16</div>
+                        <div class="week-marker">17</div>
+                        <div class="week-marker">18</div>
+                        <div class="week-marker">19</div>
+                        <div class="week-marker">20</div>
+                        <div class="week-marker">21</div>
+                        <div class="week-marker">22</div>
+                        <div class="week-marker">23</div>
+                        <div class="week-marker">24</div>
+                        <div class="week-marker">25</div>
+                        <div class="week-marker">26</div>
+                        <div class="week-marker">27</div>
+                        <div class="week-marker">28</div>
+                        <div class="week-marker">29</div>
+                        <div class="week-marker">30</div>
+                        <div class="week-marker">31</div>
+                        <div class="week-marker">32</div>
+                        <div class="week-marker">33</div>
+                        <div class="week-marker">34</div>
+                        <div class="week-marker">35</div>
+                        <div class="week-marker">36</div>
+                        <div class="week-marker">37</div>
+                        <div class="week-marker">38</div>
+                        <div class="week-marker">39</div>
+                        <div class="week-marker">40</div>
+                        <div class="week-marker">41</div>
+                        <div class="week-marker">42</div>
+                        <div class="week-marker">43</div>
+                        <div class="week-marker">44</div>
+                        <div class="week-marker">45</div>
+                        <div class="week-marker">46</div>
+                        <div class="week-marker">47</div>
+                        <div class="week-marker">48</div>
+                    </div>
+                </div>
+
+                <!-- Phase 1: Assessment and Planning -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-1);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 1: Assessment & Planning</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 1-6</span>
+                                <span>4 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 0%; width: 12.5%;">
+                            <div class="task-bar phase-1" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Conduct Full System Audit</div>
+                            <div class="task-meta"><span class="task-duration">W1-2</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 0%; width: 4.16%;">
+                            <div class="task-bar phase-1" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Define Requirements & User Stories</div>
+                            <div class="task-meta"><span class="task-duration">W2-4</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 2.08%; width: 6.25%;">
+                            <div class="task-bar phase-1" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Select Tech Stack & Tools</div>
+                            <div class="task-meta"><span class="task-duration">W3-5</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 4.16%; width: 6.25%;">
+                            <div class="task-bar phase-1" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Set Up Development Environment</div>
+                            <div class="task-meta"><span class="task-duration">W4-6</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 6.25%; width: 6.25%;">
+                            <div class="task-bar phase-1" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 12.5%;"><span class="milestone-label regular">Planning Complete</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: MVP Definition (Very Important) -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-2);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 2: Define & Prioritize MVP <span class="mvp-badge">CRITICAL</span></div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 5-8</span>
+                                <span>3 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 8.33%; width: 8.33%;">
+                            <div class="task-bar phase-2" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Identify Core MVP Features</div>
+                            <div class="task-meta"><span class="task-duration">W5-6</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 8.33%; width: 4.16%;">
+                            <div class="task-bar phase-2" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Scope MVP Integrations & Workflows</div>
+                            <div class="task-meta"><span class="task-duration">W6-7</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 10.41%; width: 4.16%;">
+                            <div class="task-bar phase-2" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Align MVP with Business Goals</div>
+                            <div class="task-meta"><span class="task-duration">W7-8</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 12.5%; width: 4.16%;">
+                            <div class="task-bar phase-2" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 16.66%;"><span class="milestone-label regular">MVP Scope Locked</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Build Core Boundary Layer -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-3);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 3: Build Core Boundary Layer</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 7-16</span>
+                                <span>3 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 12.5%; width: 20.83%;">
+                            <div class="task-bar phase-3" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Implement API Gateway (Boundary Core)</div>
+                            <div class="task-meta"><span class="task-duration">W7-12</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 12.5%; width: 12.5%;">
+                            <div class="task-bar phase-3" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Define Data Models & Contracts</div>
+                            <div class="task-meta"><span class="task-duration">W10-14</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 18.75%; width: 10.41%;">
+                            <div class="task-bar phase-3" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Incorporate Security & Monitoring</div>
+                            <div class="task-meta"><span class="task-duration">W12-16</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 22.91%; width: 10.41%;">
+                            <div class="task-bar phase-3" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 33.33%;"><span class="milestone-label regular">Gateway Ready</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 4: Integrate Internal Systems -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-4);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 4: Integrate Internal Systems</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 14-22</span>
+                                <span>3 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 27.08%; width: 18.75%;">
+                            <div class="task-bar phase-4" style="width: 100%;"></div>
+                        </div>
+                        <!-- MVP Line -->
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Connect ERP to Boundary</div>
+                            <div class="task-meta"><span class="task-duration">W14-18</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 27.08%; width: 10.41%;">
+                            <div class="task-bar phase-4" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Integrate TinyBox AI</div>
+                            <div class="task-meta"><span class="task-duration">W16-20</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 31.25%; width: 10.41%;">
+                            <div class="task-bar phase-4" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                        <div class="milestone mvp" style="left: 41.66%;"><span class="milestone-label mvp">🚀 MVP DELIVERY</span></div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Enhance Manufacturing Integrations</div>
+                            <div class="task-meta"><span class="task-duration">W18-22</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 35.41%; width: 10.41%;">
+                            <div class="task-bar phase-4" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                    </div>
+                </div>
+
+                <!-- Phase 5: Integrate External Systems -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-5);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 5: Integrate External Systems</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 20-30</span>
+                                <span>3 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 39.58%; width: 22.91%;">
+                            <div class="task-bar phase-5" style="width: 100%;"></div>
+                        </div>
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Connect Dynamics 365 CRM</div>
+                            <div class="task-meta"><span class="task-duration">W20-26</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 39.58%; width: 14.58%;">
+                            <div class="task-bar phase-5" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="mvp-line" style="left: 41.66%;"></div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Integrate Power Automate & Outlook</div>
+                            <div class="task-meta"><span class="task-duration">W22-28</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 43.75%; width: 14.58%;">
+                            <div class="task-bar phase-5" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Enable Pluggable Architecture</div>
+                            <div class="task-meta"><span class="task-duration">W26-30</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 52.08%; width: 10.41%;">
+                            <div class="task-bar phase-5" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 62.5%;"><span class="milestone-label regular">External Ready</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 6: UI/UX Development -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-6);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 6: UI/UX Development (Parallel)</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 16-34</span>
+                                <span>2 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 31.25%; width: 39.58%;">
+                            <div class="task-bar phase-6" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Build Role-Based Dashboards</div>
+                            <div class="task-meta"><span class="task-duration">W16-28</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 31.25%; width: 27.08%;">
+                            <div class="task-bar phase-6" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Add User-Centric Features</div>
+                            <div class="task-meta"><span class="task-duration">W26-34</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 52.08%; width: 18.75%;">
+                            <div class="task-bar phase-6" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 70.83%;"><span class="milestone-label regular">UI Complete</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 7: Testing & Deployment -->
+                <div class="task-row phase-header">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: var(--phase-7);"></div>
+                        <div class="task-details">
+                            <div class="task-name">Phase 7: Testing, Deployment & Iteration</div>
+                            <div class="task-meta">
+                                <span class="task-duration">Weeks 30-48</span>
+                                <span>3 Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 60.41%; width: 39.58%;">
+                            <div class="task-bar phase-7" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Conduct Comprehensive Testing</div>
+                            <div class="task-meta"><span class="task-duration">W30-38</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 60.41%; width: 18.75%;">
+                            <div class="task-bar phase-7" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Deploy & Monitor</div>
+                            <div class="task-meta"><span class="task-duration">W36-44</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 72.91%; width: 18.75%;">
+                            <div class="task-bar phase-7" style="width: 100%; height: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-row">
+                    <div class="task-info">
+                        <div class="task-phase-indicator" style="background: transparent;"></div>
+                        <div class="task-details">
+                            <div class="task-name">Establish Roadmap for Expansions</div>
+                            <div class="task-meta"><span class="task-duration">W42-48</span></div>
+                        </div>
+                    </div>
+                    <div class="timeline-grid" style="position: relative;">
+                        <div class="task-bar-container" style="left: 85.41%; width: 14.58%;">
+                            <div class="task-bar phase-7" style="width: 100%; height: 16px;"></div>
+                        </div>
+                        <div class="milestone" style="left: 100%;"><span class="milestone-label regular">V1.0 Complete</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Phase Summary Cards -->
+        <div class="phase-summary">
+            <div class="phase-card p1">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 1</span>
+                    <span class="phase-card-duration">6 weeks</span>
+                </div>
+                <div class="phase-card-title">Assessment & Planning</div>
+                <ul class="phase-card-tasks">
+                    <li>Full System Audit</li>
+                    <li>Requirements & User Stories</li>
+                    <li>Tech Stack Selection</li>
+                    <li>Dev Environment Setup</li>
+                </ul>
+            </div>
+            <div class="phase-card p2">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 2</span>
+                    <span class="phase-card-duration">4 weeks</span>
+                </div>
+                <div class="phase-card-title">MVP Definition <span class="mvp-badge">CRITICAL</span></div>
+                <ul class="phase-card-tasks">
+                    <li>Core MVP Features</li>
+                    <li>MVP Integrations Scope</li>
+                    <li>Business Goal Alignment</li>
+                </ul>
+            </div>
+            <div class="phase-card p3">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 3</span>
+                    <span class="phase-card-duration">10 weeks</span>
+                </div>
+                <div class="phase-card-title">Core Boundary Layer</div>
+                <ul class="phase-card-tasks">
+                    <li>API Gateway Implementation</li>
+                    <li>Data Models & Contracts</li>
+                    <li>Security & Monitoring</li>
+                </ul>
+            </div>
+            <div class="phase-card p4">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 4</span>
+                    <span class="phase-card-duration">9 weeks</span>
+                </div>
+                <div class="phase-card-title">Internal Integration</div>
+                <ul class="phase-card-tasks">
+                    <li>ERP Connection</li>
+                    <li>TinyBox AI Integration</li>
+                    <li>Manufacturing Systems</li>
+                </ul>
+            </div>
+            <div class="phase-card p5">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 5</span>
+                    <span class="phase-card-duration">11 weeks</span>
+                </div>
+                <div class="phase-card-title">External Integration</div>
+                <ul class="phase-card-tasks">
+                    <li>Dynamics 365 CRM</li>
+                    <li>Power Automate / Outlook</li>
+                    <li>Pluggable Architecture</li>
+                </ul>
+            </div>
+            <div class="phase-card p6">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 6</span>
+                    <span class="phase-card-duration">19 weeks</span>
+                </div>
+                <div class="phase-card-title">UI/UX Development</div>
+                <ul class="phase-card-tasks">
+                    <li>Role-Based Dashboards</li>
+                    <li>User-Centric Features</li>
+                    <li>Mobile Responsiveness</li>
+                </ul>
+            </div>
+            <div class="phase-card p7">
+                <div class="phase-card-header">
+                    <span class="phase-card-number">PHASE 7</span>
+                    <span class="phase-card-duration">19 weeks</span>
+                </div>
+                <div class="phase-card-title">Testing & Deployment</div>
+                <ul class="phase-card-tasks">
+                    <li>Comprehensive Testing</li>
+                    <li>Staged Deployment</li>
+                    <li>Expansion Roadmap</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Key Milestones -->
+        <div class="milestones-section">
+            <div class="gantt-container">
+                <div class="gantt-header">
+                    <div class="gantt-icon">🎯</div>
+                    <h2 class="gantt-title">Key Milestones</h2>
+                </div>
+
+                <div class="milestones-grid">
+                    <div class="milestone-card">
+                        <div class="milestone-icon">📋</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">Planning Complete</div>
+                            <div class="milestone-date">End of Phase 1</div>
+                        </div>
+                        <span class="milestone-week">Week 6</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">🎯</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">MVP Scope Locked</div>
+                            <div class="milestone-date">End of Phase 2</div>
+                        </div>
+                        <span class="milestone-week">Week 8</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">🔗</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">API Gateway Ready</div>
+                            <div class="milestone-date">End of Phase 3</div>
+                        </div>
+                        <span class="milestone-week">Week 16</span>
+                    </div>
+                    <div class="milestone-card mvp-milestone">
+                        <div class="milestone-icon">🚀</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">MVP DELIVERY</div>
+                            <div class="milestone-date">Core ERP + AI Integration Live</div>
+                        </div>
+                        <span class="milestone-week">Week 20</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">👥</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">CRM Integration Complete</div>
+                            <div class="milestone-date">Dynamics 365 Connected</div>
+                        </div>
+                        <span class="milestone-week">Week 26</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">🌐</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">External Systems Ready</div>
+                            <div class="milestone-date">All External Integrations Live</div>
+                        </div>
+                        <span class="milestone-week">Week 30</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">🖥️</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">UI/UX Complete</div>
+                            <div class="milestone-date">All Dashboards Deployed</div>
+                        </div>
+                        <span class="milestone-week">Week 34</span>
+                    </div>
+                    <div class="milestone-card">
+                        <div class="milestone-icon">🎉</div>
+                        <div class="milestone-info">
+                            <div class="milestone-name">V1.0 Complete</div>
+                            <div class="milestone-date">Full SSIP Platform Launch</div>
+                        </div>
+                        <span class="milestone-week">Week 48</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">© 2026 Silver Star Industries — SSIP Development Timeline Documentation</p>
+        </footer>
+    </div>
+</body>
+</html>
+

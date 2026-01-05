@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSIP Documentation Hub | Silver Star Industries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #0f1a2e;
+            --navy-primary: #1a2744;
+            --navy-medium: #2a3f5f;
+            --navy-light: #3d5a80;
+            --blue-accent: #4a90d9;
+            --blue-bright: #5da9e9;
+            --blue-glow: #7ec8e3;
+            --silver-light: #e8ecf1;
+            --silver-mid: #c5cdd8;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy-deep);
+            min-height: 100vh;
+            color: var(--white);
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(var(--blue-accent) 1px, transparent 1px),
+                linear-gradient(90deg, var(--blue-accent) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+        }
+
+        .logo svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .company-name {
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--silver-mid);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .definition {
+            margin-top: 30px;
+            padding: 24px 32px;
+            background: rgba(74, 144, 217, 0.1);
+            border: 1px solid rgba(74, 144, 217, 0.2);
+            border-radius: 16px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .definition p {
+            font-size: 0.95rem;
+            color: var(--silver-light);
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .doc-card {
+            background: rgba(26, 39, 68, 0.6);
+            border: 1px solid rgba(74, 144, 217, 0.2);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue-accent), var(--blue-glow));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .doc-card:hover {
+            border-color: rgba(74, 144, 217, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .doc-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: rgba(74, 144, 217, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(74, 144, 217, 0.15);
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 0.85rem;
+            color: var(--silver-mid);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .card-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-stat {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: rgba(15, 26, 46, 0.6);
+            border-radius: 6px;
+            color: var(--silver-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-arrow {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(74, 144, 217, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-accent);
+            transition: all 0.3s ease;
+        }
+
+        .doc-card:hover .card-arrow {
+            background: var(--blue-accent);
+            color: var(--white);
+        }
+
+        /* Info Section */
+        .info-section {
+            background: rgba(26, 39, 68, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            padding: 16px;
+            background: rgba(15, 26, 46, 0.5);
+            border-radius: 12px;
+        }
+
+        .info-item h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--blue-glow);
+            margin-bottom: 8px;
+        }
+
+        .info-item p {
+            font-size: 0.8rem;
+            color: var(--silver-mid);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .footer-mission {
+            font-style: italic;
+            color: var(--silver-mid);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto 16px;
+            line-height: 1.6;
+        }
+
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: rgba(197, 205, 216, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 L85 25 L85 45 L50 65 L15 45 L15 25 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                    <path d="M50 35 L85 55 L85 75 L50 95 L15 75 L15 55 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                    <path d="M50 65 L50 35" stroke="#4a90d9" stroke-width="3"/>
+                </svg>
+            </div>
+            <p class="company-name">Silver Star Industries</p>
+            <h1 class="title">SSIP Documentation Hub</h1>
+            <p class="subtitle">Silver Star Integration Platform — Technical documentation, architecture diagrams, and development roadmap for the enterprise integration platform</p>
+            
+            <div class="definition">
+                <p>"Silver Star Integration Platform (SSIP) is a modular, API-driven hub that unifies internal systems (ERP and TinyBox AI) with external tools like Dynamics 365 CRM, Power Automate/Outlook, and endless additional applications, enabling seamless data exchange, process automation, and scalable operations for Silver Star Industries' manufacturing workflows."</p>
+            </div>
+        </header>
+
+        <!-- Documentation Cards -->
+        <div class="cards-grid">
+            <a href="ssip-architecture-diagram.html" class="doc-card">
+                <span class="card-number">DOC-01</span>
+                <div class="card-icon">🏗️</div>
+                <h2 class="card-title">Core Architecture</h2>
+                <p class="card-description">System architecture overview showing the SSIP boundary layer connecting internal and external systems with the central API gateway.</p>
+                <div class="card-stats">
+                    <span class="card-stat">Internal Systems</span>
+                    <span class="card-stat">External Systems</span>
+                    <span class="card-stat">API Gateway</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+
+            <a href="ssip-data-flow-diagram.html" class="doc-card">
+                <span class="card-number">DOC-02</span>
+                <div class="card-icon">🔄</div>
+                <h2 class="card-title">Data Flow Diagram</h2>
+                <p class="card-description">Animated visualization of bidirectional data exchange patterns between all integrated systems through the SSIP boundary.</p>
+                <div class="card-stats">
+                    <span class="card-stat">Animated Flows</span>
+                    <span class="card-stat">5 Flow Types</span>
+                    <span class="card-stat">Real-time Stats</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+
+            <a href="ssip-manufacturing-workflow.html" class="doc-card">
+                <span class="card-number">DOC-03</span>
+                <div class="card-icon">🏭</div>
+                <h2 class="card-title">Manufacturing Workflow</h2>
+                <p class="card-description">Complete 107-step manufacturing process from customer proposal through production, shipping, installation, and project closeout.</p>
+                <div class="card-stats">
+                    <span class="card-stat">9 Phases</span>
+                    <span class="card-stat">107 Steps</span>
+                    <span class="card-stat">6-16 Weeks</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+
+            <a href="ssip-user-roles-access.html" class="doc-card">
+                <span class="card-number">DOC-04</span>
+                <div class="card-icon">👥</div>
+                <h2 class="card-title">User Roles & Access</h2>
+                <p class="card-description">Organizational structure with 32 distinct roles across 11 departments, SSIP module access matrix, and cross-functional interaction patterns.</p>
+                <div class="card-stats">
+                    <span class="card-stat">~160 Employees</span>
+                    <span class="card-stat">32 Roles</span>
+                    <span class="card-stat">Access Matrix</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+
+            <a href="ssip-development-timeline.html" class="doc-card">
+                <span class="card-number">DOC-05</span>
+                <div class="card-icon">📊</div>
+                <h2 class="card-title">Development Timeline</h2>
+                <p class="card-description">Gantt chart with 7 development phases, 26 key tasks, 8 milestones, and MVP delivery target at Week 20.</p>
+                <div class="card-stats">
+                    <span class="card-stat">48 Weeks</span>
+                    <span class="card-stat">MVP: Week 20</span>
+                    <span class="card-stat">8 Milestones</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+
+            <a href="ssip-api-gateway-code.html" class="doc-card">
+                <span class="card-number">DOC-06</span>
+                <div class="card-icon">💻</div>
+                <h2 class="card-title">API Gateway Code Architecture</h2>
+                <p class="card-description">.NET 8 code layout for the SSIP Boundary Layer with interfaces, services, and middleware implementation patterns.</p>
+                <div class="card-stats">
+                    <span class="card-stat">5 Core Modules</span>
+                    <span class="card-stat">12 Interfaces</span>
+                    <span class="card-stat">.NET 8</span>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <h3 class="info-title">📋 Quick Reference</h3>
+            <div class="info-content">
+                <div class="info-item">
+                    <h4>How to View</h4>
+                    <p>Double-click any HTML file to open in your default web browser. Works in Chrome, Edge, Firefox, and Safari.</p>
+                </div>
+                <div class="info-item">
+                    <h4>Best Viewing</h4>
+                    <p>For optimal experience, view on a desktop/laptop with screen width of 1400px or greater. All diagrams are responsive.</p>
+                </div>
+                <div class="info-item">
+                    <h4>Sharing</h4>
+                    <p>Share the entire SSIP folder via email, OneDrive, SharePoint, or network drive. All files are self-contained.</p>
+                </div>
+                <div class="info-item">
+                    <h4>Printing</h4>
+                    <p>Use browser's print function (Ctrl+P) to save as PDF or print. Some diagrams work best in landscape mode.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-mission">"Fostering a culture that inspires everyone we serve to innovate and thrive"</p>
+            <p class="footer-copyright">© 2026 Silver Star Industries — SSIP Documentation v1.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+

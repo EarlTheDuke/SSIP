@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSIP Manufacturing Workflow | Silver Star Industries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #0f1a2e;
+            --navy-primary: #1a2744;
+            --navy-medium: #2a3f5f;
+            --navy-light: #3d5a80;
+            --blue-accent: #4a90d9;
+            --blue-bright: #5da9e9;
+            --blue-glow: #7ec8e3;
+            --silver-light: #e8ecf1;
+            --silver-mid: #c5cdd8;
+            --white: #ffffff;
+            
+            /* Phase Colors */
+            --phase-sales: #f472b6;
+            --phase-design: #a78bfa;
+            --phase-planning: #60a5fa;
+            --phase-prep: #22d3ee;
+            --phase-fabrication: #34d399;
+            --phase-assembly: #fbbf24;
+            --phase-quality: #fb923c;
+            --phase-shipping: #f87171;
+            --phase-install: #c084fc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy-deep);
+            min-height: 100vh;
+            color: var(--white);
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.015;
+            background-image: 
+                linear-gradient(90deg, var(--blue-accent) 1px, transparent 1px),
+                linear-gradient(var(--blue-accent) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .company-name {
+            font-size: 0.95rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: var(--silver-mid);
+            text-transform: uppercase;
+        }
+
+        .title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--silver-mid);
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Phase Legend */
+        .phase-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(26, 39, 68, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--silver-light);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Main Workflow Container */
+        .workflow-container {
+            position: relative;
+        }
+
+        /* Phase Section */
+        .phase-section {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 24px;
+            background: rgba(26, 39, 68, 0.6);
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .phase-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy-deep);
+        }
+
+        .phase-info {
+            flex: 1;
+        }
+
+        .phase-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .phase-desc {
+            font-size: 0.8rem;
+            color: var(--silver-mid);
+        }
+
+        .phase-duration {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            background: rgba(15, 26, 46, 0.6);
+            border-radius: 6px;
+            color: var(--silver-mid);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Steps Grid */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--blue-accent), transparent);
+            border-radius: 1px;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: rgba(26, 39, 68, 0.5);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 10px;
+            padding: 14px 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card:hover {
+            border-color: rgba(74, 144, 217, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            opacity: 0.6;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .step-number {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0;
+        }
+
+        .step-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .step-details {
+            font-size: 0.72rem;
+            color: var(--silver-mid);
+            line-height: 1.4;
+        }
+
+        .step-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .step-tag {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            background: rgba(74, 144, 217, 0.15);
+            border-radius: 4px;
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Decision Point */
+        .step-card.decision {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .step-card.decision .step-number {
+            background: var(--phase-assembly);
+            color: var(--navy-deep);
+        }
+
+        /* Critical Step */
+        .step-card.critical {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        .step-card.critical::after {
+            content: '⚠';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+        }
+
+        /* Phase-specific colors */
+        .phase-sales .phase-header { border-color: var(--phase-sales); }
+        .phase-sales .phase-number { background: var(--phase-sales); }
+        .phase-sales .step-card::before { background: var(--phase-sales); }
+        .phase-sales .step-number { background: rgba(244, 114, 182, 0.2); color: var(--phase-sales); }
+
+        .phase-design .phase-header { border-color: var(--phase-design); }
+        .phase-design .phase-number { background: var(--phase-design); }
+        .phase-design .step-card::before { background: var(--phase-design); }
+        .phase-design .step-number { background: rgba(167, 139, 250, 0.2); color: var(--phase-design); }
+
+        .phase-planning .phase-header { border-color: var(--phase-planning); }
+        .phase-planning .phase-number { background: var(--phase-planning); }
+        .phase-planning .step-card::before { background: var(--phase-planning); }
+        .phase-planning .step-number { background: rgba(96, 165, 250, 0.2); color: var(--phase-planning); }
+
+        .phase-prep .phase-header { border-color: var(--phase-prep); }
+        .phase-prep .phase-number { background: var(--phase-prep); }
+        .phase-prep .step-card::before { background: var(--phase-prep); }
+        .phase-prep .step-number { background: rgba(34, 211, 238, 0.2); color: var(--phase-prep); }
+
+        .phase-fabrication .phase-header { border-color: var(--phase-fabrication); }
+        .phase-fabrication .phase-number { background: var(--phase-fabrication); }
+        .phase-fabrication .step-card::before { background: var(--phase-fabrication); }
+        .phase-fabrication .step-number { background: rgba(52, 211, 153, 0.2); color: var(--phase-fabrication); }
+
+        .phase-assembly .phase-header { border-color: var(--phase-assembly); }
+        .phase-assembly .phase-number { background: var(--phase-assembly); }
+        .phase-assembly .step-card::before { background: var(--phase-assembly); }
+        .phase-assembly .step-number { background: rgba(251, 191, 36, 0.2); color: var(--phase-assembly); }
+
+        .phase-quality .phase-header { border-color: var(--phase-quality); }
+        .phase-quality .phase-number { background: var(--phase-quality); }
+        .phase-quality .step-card::before { background: var(--phase-quality); }
+        .phase-quality .step-number { background: rgba(251, 146, 60, 0.2); color: var(--phase-quality); }
+
+        .phase-shipping .phase-header { border-color: var(--phase-shipping); }
+        .phase-shipping .phase-number { background: var(--phase-shipping); }
+        .phase-shipping .step-card::before { background: var(--phase-shipping); }
+        .phase-shipping .step-number { background: rgba(248, 113, 113, 0.2); color: var(--phase-shipping); }
+
+        .phase-install .phase-header { border-color: var(--phase-install); }
+        .phase-install .phase-number { background: var(--phase-install); }
+        .phase-install .step-card::before { background: var(--phase-install); }
+        .phase-install .step-number { background: rgba(192, 132, 252, 0.2); color: var(--phase-install); }
+
+        /* Connector Arrow between phases */
+        .phase-connector {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .phase-connector svg {
+            width: 30px;
+            height: 30px;
+            color: var(--blue-accent);
+            opacity: 0.5;
+        }
+
+        /* Summary Stats */
+        .workflow-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+            padding: 24px;
+            background: rgba(26, 39, 68, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 144, 217, 0.15);
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 16px;
+            background: rgba(15, 26, 46, 0.5);
+            border-radius: 12px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--blue-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .summary-label {
+            font-size: 0.8rem;
+            color: var(--silver-mid);
+            margin-top: 4px;
+        }
+
+        /* System Integration Callouts */
+        .integration-callout {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            background: rgba(74, 144, 217, 0.2);
+            border: 1px solid rgba(74, 144, 217, 0.3);
+            border-radius: 4px;
+            color: var(--blue-bright);
+            margin-top: 6px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(74, 144, 217, 0.1);
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(197, 205, 216, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .phase-header {
+                flex-wrap: wrap;
+            }
+
+            .phase-duration {
+                width: 100%;
+                text-align: center;
+                margin-top: 10px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .phase-section {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .phase-section:nth-child(1) { animation-delay: 0.1s; }
+        .phase-section:nth-child(2) { animation-delay: 0.15s; }
+        .phase-section:nth-child(3) { animation-delay: 0.2s; }
+        .phase-section:nth-child(4) { animation-delay: 0.25s; }
+        .phase-section:nth-child(5) { animation-delay: 0.3s; }
+        .phase-section:nth-child(6) { animation-delay: 0.35s; }
+        .phase-section:nth-child(7) { animation-delay: 0.4s; }
+        .phase-section:nth-child(8) { animation-delay: 0.45s; }
+        .phase-section:nth-child(9) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 5 L85 25 L85 45 L50 65 L15 45 L15 25 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 35 L85 55 L85 75 L50 95 L15 75 L15 55 Z" stroke="#4a90d9" stroke-width="3" fill="none"/>
+                        <path d="M50 65 L50 35" stroke="#4a90d9" stroke-width="3"/>
+                    </svg>
+                </div>
+                <span class="company-name">Silver Star Industries</span>
+            </div>
+            <h1 class="title">Manufacturing Workflow</h1>
+            <p class="subtitle">Complete end-to-end process flow from initial customer inquiry through production, delivery, and project closeout — integrated with SSIP systems</p>
+        </header>
+
+        <!-- Phase Legend -->
+        <div class="phase-legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-sales);"></div>
+                <span>Sales & Bidding</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-design);"></div>
+                <span>Design & Engineering</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-planning);"></div>
+                <span>Production Planning</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-prep);"></div>
+                <span>Pre-Production</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-fabrication);"></div>
+                <span>Fabrication</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-assembly);"></div>
+                <span>Assembly & Finishing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-quality);"></div>
+                <span>Quality Control</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-shipping);"></div>
+                <span>Logistics & Shipping</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--phase-install);"></div>
+                <span>Install & Closeout</span>
+            </div>
+        </div>
+
+        <!-- Workflow Phases -->
+        <div class="workflow-container">
+            
+            <!-- PHASE 1: Sales & Bidding -->
+            <div class="phase-section phase-sales">
+                <div class="phase-header">
+                    <div class="phase-number">1</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Sales & Bidding</h2>
+                        <p class="phase-desc">Customer acquisition, requirements gathering, and proposal development</p>
+                    </div>
+                    <span class="phase-duration">⏱ 1-4 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.1</span>
+                            <span class="step-name">Lead Generation</span>
+                        </div>
+                        <p class="step-details">Inbound inquiries, referrals, trade shows, website leads</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CRM</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.2</span>
+                            <span class="step-name">Initial Qualification</span>
+                        </div>
+                        <p class="step-details">Budget fit, timeline, scope assessment, capability match</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.3</span>
+                            <span class="step-name">RFQ/RFP Receipt</span>
+                        </div>
+                        <p class="step-details">Formal request documentation, spec review, bid/no-bid decision</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Outlook</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.4</span>
+                            <span class="step-name">Site Survey</span>
+                        </div>
+                        <p class="step-details">Field measurements, site conditions, access assessment, photos</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.5</span>
+                            <span class="step-name">Concept Development</span>
+                        </div>
+                        <p class="step-details">Initial sketches, design direction, material palette exploration</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.6</span>
+                            <span class="step-name">Cost Estimation</span>
+                        </div>
+                        <p class="step-details">Material takeoffs, labor hours, overhead, margin calculation</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.7</span>
+                            <span class="step-name">Proposal Preparation</span>
+                        </div>
+                        <p class="step-details">Formal quote document, scope definition, terms & conditions</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.8</span>
+                            <span class="step-name">Internal Review</span>
+                        </div>
+                        <p class="step-details">Management approval, risk assessment, capacity check</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.9</span>
+                            <span class="step-name">Proposal Submission</span>
+                        </div>
+                        <p class="step-details">Client presentation, Q&A session, submittal tracking</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CRM</span>
+                            <span class="step-tag">Outlook</span>
+                        </div>
+                    </div>
+                    <div class="step-card decision">
+                        <div class="step-header">
+                            <span class="step-number">1.10</span>
+                            <span class="step-name">Negotiation</span>
+                        </div>
+                        <p class="step-details">Scope refinement, value engineering, price adjustments</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.11</span>
+                            <span class="step-name">Contract Award</span>
+                        </div>
+                        <p class="step-details">PO receipt, contract execution, deposit collection</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                            <span class="step-tag">A/R</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">1.12</span>
+                            <span class="step-name">Project Kickoff</span>
+                        </div>
+                        <p class="step-details">Internal handoff meeting, PM assignment, timeline review</p>
+                        <div class="integration-callout">🔗 SSIP → ERP Item Order Created</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 2: Design & Engineering -->
+            <div class="phase-section phase-design">
+                <div class="phase-header">
+                    <div class="phase-number">2</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Design & Engineering</h2>
+                        <p class="phase-desc">Detailed design development, engineering documentation, and customer approvals</p>
+                    </div>
+                    <span class="phase-duration">⏱ 2-6 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.1</span>
+                            <span class="step-name">Project Setup</span>
+                        </div>
+                        <p class="step-details">ERP project creation, folder structure, document control</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.2</span>
+                            <span class="step-name">Design Brief</span>
+                        </div>
+                        <p class="step-details">Requirements documentation, brand guidelines, functional specs</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.3</span>
+                            <span class="step-name">3D Modeling</span>
+                        </div>
+                        <p class="step-details">SolidWorks design, parametric modeling, assembly creation</p>
+                        <div class="step-tags">
+                            <span class="step-tag">SolidWorks</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.4</span>
+                            <span class="step-name">Rendering & Visualization</span>
+                        </div>
+                        <p class="step-details">Photo-realistic renders, environment mockups, animations</p>
+                    </div>
+                    <div class="step-card decision">
+                        <div class="step-header">
+                            <span class="step-number">2.5</span>
+                            <span class="step-name">Design Review (Internal)</span>
+                        </div>
+                        <p class="step-details">Manufacturability check, cost validation, engineering review</p>
+                    </div>
+                    <div class="step-card critical">
+                        <div class="step-header">
+                            <span class="step-number">2.6</span>
+                            <span class="step-name">Customer Approval</span>
+                        </div>
+                        <p class="step-details">Design presentation, revision cycles, formal sign-off</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CRM</span>
+                            <span class="step-tag">Outlook</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.7</span>
+                            <span class="step-name">Engineering Detailing</span>
+                        </div>
+                        <p class="step-details">Shop drawings, tolerances, connection details, hardware specs</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.8</span>
+                            <span class="step-name">BOM Generation</span>
+                        </div>
+                        <p class="step-details">Bill of Materials creation, quantity takeoffs, cut lists</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                            <span class="step-tag">SolidWorks</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.9</span>
+                            <span class="step-name">Component Definition</span>
+                        </div>
+                        <p class="step-details">Item order breakdown, component hierarchy, assembly structure</p>
+                        <div class="integration-callout">🔗 ERP Components Created</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.10</span>
+                            <span class="step-name">Material Specification</span>
+                        </div>
+                        <p class="step-details">Substrate selection, laminate specs, veneer matching, metal alloys</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.11</span>
+                            <span class="step-name">Finish Selection</span>
+                        </div>
+                        <p class="step-details">Paint colors, stain samples, lacquer sheen, powder coat specs</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">2.12</span>
+                            <span class="step-name">Hardware Selection</span>
+                        </div>
+                        <p class="step-details">Hinges, slides, locks, lighting, electrical components</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 3: Production Planning -->
+            <div class="phase-section phase-planning">
+                <div class="phase-header">
+                    <div class="phase-number">3</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Production Planning</h2>
+                        <p class="phase-desc">Resource allocation, procurement, and scheduling for manufacturing</p>
+                    </div>
+                    <span class="phase-duration">⏱ 1-2 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.1</span>
+                            <span class="step-name">Material Takeoff</span>
+                        </div>
+                        <p class="step-details">Sheet goods calculation, linear footage, hardware counts</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.2</span>
+                            <span class="step-name">Inventory Check</span>
+                        </div>
+                        <p class="step-details">Stock verification, reserved materials, shortage identification</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.3</span>
+                            <span class="step-name">Vendor Selection</span>
+                        </div>
+                        <p class="step-details">Supplier quotes, lead time comparison, quality assessment</p>
+                        <div class="step-tags">
+                            <span class="step-tag">A/P</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.4</span>
+                            <span class="step-name">Purchase Orders</span>
+                        </div>
+                        <p class="step-details">PO creation, approval workflow, vendor communication</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                            <span class="step-tag">Buying</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.5</span>
+                            <span class="step-name">Lead Time Tracking</span>
+                        </div>
+                        <p class="step-details">Delivery date monitoring, expediting, alternative sourcing</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.6</span>
+                            <span class="step-name">Capacity Planning</span>
+                        </div>
+                        <p class="step-details">Machine availability, labor hours, overtime assessment</p>
+                        <div class="step-tags">
+                            <span class="step-tag">TinyBox AI</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.7</span>
+                            <span class="step-name">Production Scheduling</span>
+                        </div>
+                        <p class="step-details">Work center loading, sequencing, critical path analysis</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.8</span>
+                            <span class="step-name">Resource Allocation</span>
+                        </div>
+                        <p class="step-details">Crew assignment, skill matching, shift planning</p>
+                        <div class="step-tags">
+                            <span class="step-tag">HR</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.9</span>
+                            <span class="step-name">Subcontractor Coordination</span>
+                        </div>
+                        <p class="step-details">Outside services scheduling (specialty finishes, glass, etc.)</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">3.10</span>
+                            <span class="step-name">Quality Standards</span>
+                        </div>
+                        <p class="step-details">Inspection criteria, tolerance specs, finish standards</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 4: Pre-Production -->
+            <div class="phase-section phase-prep">
+                <div class="phase-header">
+                    <div class="phase-number">4</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Pre-Production Preparation</h2>
+                        <p class="phase-desc">Work order creation, CNC programming, and material staging</p>
+                    </div>
+                    <span class="phase-duration">⏱ 3-5 days typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card critical">
+                        <div class="step-header">
+                            <span class="step-number">4.1</span>
+                            <span class="step-name">Component Release</span>
+                        </div>
+                        <p class="step-details">PM releases components to shop floor for manufacturing</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                        <div class="integration-callout">🔗 SSIP Triggers Work Orders</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.2</span>
+                            <span class="step-name">Work Order Generation</span>
+                        </div>
+                        <p class="step-details">CNC, edge band, panel saw, chop saw, assembly orders created</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.3</span>
+                            <span class="step-name">Metal Shop Orders</span>
+                        </div>
+                        <p class="step-details">Sub-item orders for M-numbers, metal fabrication routing</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.4</span>
+                            <span class="step-name">Pathfinder Processing</span>
+                        </div>
+                        <p class="step-details">3D to 2D conversion, sheet nesting, optimization</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Pathfinder</span>
+                            <span class="step-tag">TinyBox AI</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.5</span>
+                            <span class="step-name">CNC Programming</span>
+                        </div>
+                        <p class="step-details">Tool path generation, feed rates, tool selection</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.6</span>
+                            <span class="step-name">Nesting Optimization</span>
+                        </div>
+                        <p class="step-details">Material yield optimization, grain matching, waste reduction</p>
+                        <div class="step-tags">
+                            <span class="step-tag">TinyBox AI</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.7</span>
+                            <span class="step-name">Material Receiving</span>
+                        </div>
+                        <p class="step-details">Delivery verification, damage inspection, quantity check</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.8</span>
+                            <span class="step-name">Incoming Inspection</span>
+                        </div>
+                        <p class="step-details">Quality verification, spec compliance, sample approval</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.9</span>
+                            <span class="step-name">Material Staging</span>
+                        </div>
+                        <p class="step-details">Kitting, location assignment, work center delivery</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">4.10</span>
+                            <span class="step-name">Shop Packet Creation</span>
+                        </div>
+                        <p class="step-details">Drawings, cut lists, hardware lists, assembly instructions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 5: Fabrication -->
+            <div class="phase-section phase-fabrication">
+                <div class="phase-header">
+                    <div class="phase-number">5</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Fabrication & Machining</h2>
+                        <p class="phase-desc">Core manufacturing operations including CNC, cutting, and material processing</p>
+                    </div>
+                    <span class="phase-duration">⏱ 1-4 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.1</span>
+                            <span class="step-name">CNC Router Cutting</span>
+                        </div>
+                        <p class="step-details">Flat panel cutting, profiling, drilling, edge routing</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CNC Work Order</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.2</span>
+                            <span class="step-name">Panel Saw Operations</span>
+                        </div>
+                        <p class="step-details">Sheet breakdown, ripping, cross-cutting</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Panel Saw WO</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.3</span>
+                            <span class="step-name">Chop Saw Cutting</span>
+                        </div>
+                        <p class="step-details">Solid wood, trim, molding, metal stock cutting</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Chop Saw WO</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.4</span>
+                            <span class="step-name">Edge Banding</span>
+                        </div>
+                        <p class="step-details">PVC, wood, veneer edge application, trimming, buffing</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Edge Band WO</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.5</span>
+                            <span class="step-name">Drilling & Boring</span>
+                        </div>
+                        <p class="step-details">System holes, hardware prep, shelf pin holes, hinge cups</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.6</span>
+                            <span class="step-name">Laminating</span>
+                        </div>
+                        <p class="step-details">HPL application, contact cement, press lamination</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.7</span>
+                            <span class="step-name">Veneer Application</span>
+                        </div>
+                        <p class="step-details">Veneer pressing, seam matching, grain alignment</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.8</span>
+                            <span class="step-name">Wide Belt Sanding</span>
+                        </div>
+                        <p class="step-details">Surface preparation, thickness calibration, finish sanding</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.9</span>
+                            <span class="step-name">Metal Cutting</span>
+                        </div>
+                        <p class="step-details">Tube/angle cutting, plate shearing, plasma cutting</p>
+                        <div class="step-tags">
+                            <span class="step-tag">M-Number</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.10</span>
+                            <span class="step-name">Metal Forming</span>
+                        </div>
+                        <p class="step-details">Bending, rolling, brake forming, tube bending</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.11</span>
+                            <span class="step-name">Welding</span>
+                        </div>
+                        <p class="step-details">MIG, TIG, spot welding, frame fabrication</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">5.12</span>
+                            <span class="step-name">Metal Finishing</span>
+                        </div>
+                        <p class="step-details">Grinding, polishing, brushing, deburring</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 6: Assembly & Finishing -->
+            <div class="phase-section phase-assembly">
+                <div class="phase-header">
+                    <div class="phase-number">6</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Assembly & Finishing</h2>
+                        <p class="phase-desc">Component assembly, surface finishing, and hardware installation</p>
+                    </div>
+                    <span class="phase-duration">⏱ 1-3 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.1</span>
+                            <span class="step-name">Sub-Assembly</span>
+                        </div>
+                        <p class="step-details">Drawer boxes, door assemblies, shelf units, interior components</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Shop WO</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.2</span>
+                            <span class="step-name">Case Assembly</span>
+                        </div>
+                        <p class="step-details">Cabinet construction, case clamping, squaring, fastening</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.3</span>
+                            <span class="step-name">Frame Assembly</span>
+                        </div>
+                        <p class="step-details">Metal frame construction, fixture assembly, structural components</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.4</span>
+                            <span class="step-name">Solid Surface Work</span>
+                        </div>
+                        <p class="step-details">Corian/quartz fabrication, seaming, edge profiling</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.5</span>
+                            <span class="step-name">Pre-Finish Prep</span>
+                        </div>
+                        <p class="step-details">Final sanding, filler application, masking, cleaning</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.6</span>
+                            <span class="step-name">Staining</span>
+                        </div>
+                        <p class="step-details">Color matching, stain application, wiping, drying</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.7</span>
+                            <span class="step-name">Sealing</span>
+                        </div>
+                        <p class="step-details">Seal coat application, sanding sealer, barrier coat</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.8</span>
+                            <span class="step-name">Paint / Lacquer</span>
+                        </div>
+                        <p class="step-details">Spray application, multiple coats, flash-off times</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.9</span>
+                            <span class="step-name">Powder Coating</span>
+                        </div>
+                        <p class="step-details">Metal finishing, electrostatic application, curing</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.10</span>
+                            <span class="step-name">Final Sanding & Rubbing</span>
+                        </div>
+                        <p class="step-details">Finish leveling, rubbing compound, polishing</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.11</span>
+                            <span class="step-name">Hardware Installation</span>
+                        </div>
+                        <p class="step-details">Hinges, slides, locks, pulls, catches, levelers</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.12</span>
+                            <span class="step-name">Electrical/Lighting</span>
+                        </div>
+                        <p class="step-details">LED installation, wiring, transformers, switches</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.13</span>
+                            <span class="step-name">Glass & Mirror</span>
+                        </div>
+                        <p class="step-details">Tempered glass, mirror mounting, edge polishing</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">6.14</span>
+                            <span class="step-name">Touch-Up</span>
+                        </div>
+                        <p class="step-details">Finish repairs, color matching, defect correction</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 7: Quality Control -->
+            <div class="phase-section phase-quality">
+                <div class="phase-header">
+                    <div class="phase-number">7</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Quality Control & Inspection</h2>
+                        <p class="phase-desc">Multi-stage quality verification and defect resolution</p>
+                    </div>
+                    <span class="phase-duration">⏱ 2-5 days typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.1</span>
+                            <span class="step-name">In-Process Inspection</span>
+                        </div>
+                        <p class="step-details">Dimensional checks at each station, first article inspection</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.2</span>
+                            <span class="step-name">Finish Inspection</span>
+                        </div>
+                        <p class="step-details">Color match, sheen level, texture, coverage, adhesion</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.3</span>
+                            <span class="step-name">Dimensional Verification</span>
+                        </div>
+                        <p class="step-details">Critical dimensions, tolerance compliance, fit check</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.4</span>
+                            <span class="step-name">Hardware Function Test</span>
+                        </div>
+                        <p class="step-details">Drawer operation, door swing, lock function, lighting test</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.5</span>
+                            <span class="step-name">Fit-Up / Dry Assembly</span>
+                        </div>
+                        <p class="step-details">Component alignment, connection verification, mock installation</p>
+                    </div>
+                    <div class="step-card critical">
+                        <div class="step-header">
+                            <span class="step-number">7.6</span>
+                            <span class="step-name">Final QC Inspection</span>
+                        </div>
+                        <p class="step-details">Complete unit inspection, checklist completion, sign-off</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.7</span>
+                            <span class="step-name">Punch List Creation</span>
+                        </div>
+                        <p class="step-details">Defect documentation, repair priorities, rework assignment</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.8</span>
+                            <span class="step-name">Rework & Repair</span>
+                        </div>
+                        <p class="step-details">Defect correction, re-finishing, component replacement</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.9</span>
+                            <span class="step-name">Re-Inspection</span>
+                        </div>
+                        <p class="step-details">Verify repairs, final approval, release to shipping</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">7.10</span>
+                            <span class="step-name">Photo Documentation</span>
+                        </div>
+                        <p class="step-details">Pre-ship photos, detail shots, assembly reference images</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 8: Logistics & Shipping -->
+            <div class="phase-section phase-shipping">
+                <div class="phase-header">
+                    <div class="phase-number">8</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Logistics & Shipping</h2>
+                        <p class="phase-desc">Packaging, documentation, and delivery coordination</p>
+                    </div>
+                    <span class="phase-duration">⏱ 2-7 days typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.1</span>
+                            <span class="step-name">Packing List Creation</span>
+                        </div>
+                        <p class="step-details">Component inventory, box contents, piece counts</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.2</span>
+                            <span class="step-name">Protective Packaging</span>
+                        </div>
+                        <p class="step-details">Blanket wrap, foam protection, corner guards, stretch wrap</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.3</span>
+                            <span class="step-name">Crating</span>
+                        </div>
+                        <p class="step-details">Custom crate construction, blocking, bracing, strapping</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.4</span>
+                            <span class="step-name">Labeling</span>
+                        </div>
+                        <p class="step-details">Destination labels, handling instructions, piece numbers</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.5</span>
+                            <span class="step-name">Staging</span>
+                        </div>
+                        <p class="step-details">Dock staging, load sequencing, shipment consolidation</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.6</span>
+                            <span class="step-name">Carrier Selection</span>
+                        </div>
+                        <p class="step-details">Quote comparison, transit time, specialty requirements</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.7</span>
+                            <span class="step-name">BOL Generation</span>
+                        </div>
+                        <p class="step-details">Bill of lading, weight/dims, freight class, special instructions</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.8</span>
+                            <span class="step-name">Loading</span>
+                        </div>
+                        <p class="step-details">Forklift loading, load optimization, securing, photography</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.9</span>
+                            <span class="step-name">Ship Notification</span>
+                        </div>
+                        <p class="step-details">Customer notification, tracking info, ETA communication</p>
+                        <div class="step-tags">
+                            <span class="step-tag">Outlook</span>
+                            <span class="step-tag">CRM</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.10</span>
+                            <span class="step-name">Transit Tracking</span>
+                        </div>
+                        <p class="step-details">GPS monitoring, delivery updates, delay management</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">8.11</span>
+                            <span class="step-name">Delivery Confirmation</span>
+                        </div>
+                        <p class="step-details">POD receipt, damage assessment, shortage claims</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <!-- PHASE 9: Installation & Closeout -->
+            <div class="phase-section phase-install">
+                <div class="phase-header">
+                    <div class="phase-number">9</div>
+                    <div class="phase-info">
+                        <h2 class="phase-title">Installation & Project Closeout</h2>
+                        <p class="phase-desc">Field installation, customer acceptance, and project completion</p>
+                    </div>
+                    <span class="phase-duration">⏱ 1-4 weeks typical</span>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.1</span>
+                            <span class="step-name">Site Coordination</span>
+                        </div>
+                        <p class="step-details">GC scheduling, access arrangements, site readiness check</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.2</span>
+                            <span class="step-name">Receiving & Staging</span>
+                        </div>
+                        <p class="step-details">Unloading, damage inspection, component organization</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.3</span>
+                            <span class="step-name">Site Preparation</span>
+                        </div>
+                        <p class="step-details">Floor protection, area prep, utility coordination</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.4</span>
+                            <span class="step-name">Base Installation</span>
+                        </div>
+                        <p class="step-details">Leveling, anchoring, base cabinet/fixture placement</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.5</span>
+                            <span class="step-name">Upper Installation</span>
+                        </div>
+                        <p class="step-details">Wall mounting, upper fixture placement, alignment</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.6</span>
+                            <span class="step-name">Countertop Install</span>
+                        </div>
+                        <p class="step-details">Surface placement, seaming, scribing, fastening</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.7</span>
+                            <span class="step-name">Hardware & Accessories</span>
+                        </div>
+                        <p class="step-details">Final hardware, shelving, accessories, signage</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.8</span>
+                            <span class="step-name">Electrical Connection</span>
+                        </div>
+                        <p class="step-details">Lighting hookup, power connections, testing</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.9</span>
+                            <span class="step-name">Field Punch List</span>
+                        </div>
+                        <p class="step-details">On-site defect identification, touch-up, adjustments</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.10</span>
+                            <span class="step-name">Final Cleaning</span>
+                        </div>
+                        <p class="step-details">Surface cleaning, protective film removal, debris removal</p>
+                    </div>
+                    <div class="step-card critical">
+                        <div class="step-header">
+                            <span class="step-number">9.11</span>
+                            <span class="step-name">Customer Walkthrough</span>
+                        </div>
+                        <p class="step-details">Final inspection with client, functionality demo, Q&A</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.12</span>
+                            <span class="step-name">Sign-Off / Acceptance</span>
+                        </div>
+                        <p class="step-details">Formal acceptance document, substantial completion</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CRM</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.13</span>
+                            <span class="step-name">Final Invoicing</span>
+                        </div>
+                        <p class="step-details">Retention release, final billing, payment collection</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                            <span class="step-tag">A/R</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.14</span>
+                            <span class="step-name">Warranty Registration</span>
+                        </div>
+                        <p class="step-details">Warranty documentation, product registration, care instructions</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.15</span>
+                            <span class="step-name">Project Closeout</span>
+                        </div>
+                        <p class="step-details">Document archival, cost reconciliation, lessons learned</p>
+                        <div class="step-tags">
+                            <span class="step-tag">ERP</span>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-header">
+                            <span class="step-number">9.16</span>
+                            <span class="step-name">Customer Feedback</span>
+                        </div>
+                        <p class="step-details">Satisfaction survey, testimonial request, referral ask</p>
+                        <div class="step-tags">
+                            <span class="step-tag">CRM</span>
+                            <span class="step-tag">Outlook</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="workflow-summary">
+            <div class="summary-stat">
+                <div class="summary-value">9</div>
+                <div class="summary-label">Major Phases</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-value">107</div>
+                <div class="summary-label">Process Steps</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-value">6-16</div>
+                <div class="summary-label">Weeks Typical</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-value">14</div>
+                <div class="summary-label">Decision Points</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-value">40+</div>
+                <div class="summary-label">SSIP Integrations</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">© 2026 Silver Star Industries — SSIP Manufacturing Workflow Documentation</p>
+        </footer>
+    </div>
+</body>
+</html>
+
